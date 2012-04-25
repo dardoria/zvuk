@@ -1,3 +1,5 @@
+(in-package #:clmsndlib)
+
 ;;todo
 ;; enum {MUS_UNSUPPORTED, MUS_NEXT, MUS_AIFC, MUS_RIFF, MUS_RF64, MUS_BICSF, MUS_NIST, MUS_INRS, MUS_ESPS, MUS_SVX, MUS_VOC, 
 ;;       MUS_SNDT, MUS_RAW, MUS_SMP, MUS_AVR, MUS_IRCAM, MUS_SD1, MUS_SPPACK, MUS_MUS10, MUS_HCOM, MUS_PSION, MUS_MAUD,
@@ -113,7 +115,7 @@
 
 (defcfun ("mus_sound_maxamps" mus-sound-maxamps) :double (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
 (defcfun ("mus_sound_set_maxamps" mus-sound-set-maxamps) :int (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
-(defcfun ("mus_sound_maxamp_exists" mus-sound-maxamp-exists) :bool (ifile :string))
+(defcfun ("mus_sound_maxamp_exists" mus-sound-maxamp-exists) :boolean (ifile :string))
 
 ;todo
 ;(defcfun ("mus_file_to_array" mus-file-to-array) :double (filename :string) (chan :int) (start :double) (samples :double) (array (:pointer :sample))) ;;todo mus_sample_t
@@ -129,12 +131,12 @@
 (defcfun ("mus_audio_describe" mus-audio-describe) :string)
 (defcfun ("mus_audio_open_output" mus-audio-open-output) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
 (defcfun ("mus_audio_open_input" mus-audio-open-input) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
-(defcfun ("mus_audio_write" mus-audio-write :int (line :int) (buffer (:pointer :string)) (bytes :int)))
-(defcfun ("mus_audio_close" mus-audio-close :int (line :int)))
-(defcfun ("mus_audio_read" mus-audio-read :int (line :int) (buffer (:pointer :string)) (bytes :int)))
+(defcfun ("mus_audio_write" mus-audio-write) :int (line :int) (buffer (:pointer :string)) (bytes :int))
+(defcfun ("mus_audio_close" mus-audio-close) :int (line :int))
+(defcfun ("mus_audio_read" mus-audio-read) :int (line :int) (buffer (:pointer :string)) (bytes :int))
 
-(defcfun ("mus_audio_write_buffers" mus-audio-write-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :bool))
-(defcfun ("mus_audio_read_buffers" mus-audio-read-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :bool))
+(defcfun ("mus_audio_write_buffers" mus-audio-write-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :boolean))
+(defcfun ("mus_audio_read_buffers" mus-audio-read-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :boolean))
 (defcfun ("mus_audio_initialize" mus-audio-initialize) :int)
 (defcfun ("mus_audio_reinitialize" mus-audio-reinitialize) :int)
 (defcfun ("mus_audio_systems" mus-audio-systems) :int)
@@ -149,13 +151,13 @@
 (defcfun ("mus_alsa_capture_device" mus-alsa-capture-device) :string)
 (defcfun ("mus_alsa_set_capture_device" mus-alsa-set-capture-device) :string (name :string))
 (defcfun ("mus_alsa_device" mus-alsa-device) :string)
-(defcfun ("mus_alsa_set_device" mus-alsa-set-device :string (name :string)))
+(defcfun ("mus_alsa_set_device" mus-alsa-set-device) :string (name :string))
 (defcfun ("mus_alsa_buffer_size" mus-alsa-buffer-size) :int)
 (defcfun ("mus_alsa_set_buffer_size" mus-alsa-set-buffer-size) :int (size :int))
 (defcfun ("mus_alsa_buffers" mus-alsa-buffers) :int)
 (defcfun ("mus_alsa_set_buffers" mus-alsa-set-buffers) :int (num :int))
-(defcfun ("mus_alsa_squelch_warning" mus-alsa-squelch-warning) :bool)
-(defcfun ("mus_alsa_set_squelch_warning" mus-alsa-set-squelch-warning) :bool (val :bool))
+(defcfun ("mus_alsa_squelch_warning" mus-alsa-squelch-warning) :boolean)
+(defcfun ("mus_alsa_set_squelch_warning" mus-alsa-set-squelch-warning) :boolean (val :boolean))
 
 (defcfun ("mus_audio_device_channels" mus-audio-device-channels) :int (dev :int))
 (defcfun ("mus_audio_device_format" mus-audio-device-format) :int (dev :int))
@@ -164,7 +166,7 @@
 
 (defcfun ("mus_file_open_descriptors" mus-file-open-descriptors) :int (tfd :int) (arg :string) (df :int) (ds :int) (dl :double) (cd :int) (dt :int))
 (defcfun ("mus_file_open_read" mus-file-open-read) :int (arg :string))
-(defcfun ("mus_file_probe" mus-file-probe) :bool (arg :string))
+(defcfun ("mus_file_probe" mus-file-probe) :boolean (arg :string))
 (defcfun ("mus_file_open_write" mus-file-open-write) :int (arg :string))
 (defcfun ("mus_file_create" mus-file-creat) :int (arg :string))
 (defcfun ("mus_file_reopen_write" mus-file-reopen-write) :int (arg :string))
@@ -177,14 +179,14 @@
 (defcfun ("mus_file_read_file" mus-file-read-file) :double (tfd :int) (bg :double) (chans :int) (nints :double) (bufs (:pointer :double)))
 (defcfun ("mus_file_read_buffer" mus-file-read-buffer) :double (charbuf-data-format :int) (beg :double) (chans :int) (nints :double) (bufs (:pointer :double)) (charbuf :string))
 (defcfun ("mus_file_write_file" mus-file-write-file) :int (tfd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
-(defcfun ("mus_file_write_buffer" mus-file-write-buffer) :int (charbuf-data-format :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (charbuf :string) (clipped :bool))
+(defcfun ("mus_file_write_buffer" mus-file-write-buffer) :int (charbuf-data-format :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (charbuf :string) (clipped :boolean))
 (defcfun ("mus_expand_filename" mus-expand-filename) :string (name :string))
 (defcfun ("mus_getcwd" mus-getcwd) :string)
 
-(defcfun ("mus_clipping" mus-clipping) :bool)
-(defcfun ("mus_set_clipping" mus-set-clipping) :bool (new-value :bool))
-(defcfun ("mus_file_clipping" mus-file-clipping) :bool (tfd :int))
-(defcfun ("mus_file_set_clipping" mus-file-set-clipping) :int (tfd :int) (clipped :bool))
+(defcfun ("mus_clipping" mus-clipping) :boolean)
+(defcfun ("mus_set_clipping" mus-set-clipping) :boolean (new-value :boolean))
+(defcfun ("mus_file_clipping" mus-file-clipping) :boolean (tfd :int))
+(defcfun ("mus_file_set_clipping" mus-file-set-clipping) :int (tfd :int) (clipped :boolean))
 
 (defcfun ("mus_file_set_header_type" mus-file-set-header-type) :int (tfd :int) (type :int))
 (defcfun ("mus_file_header_type" mus-file-header-type) :int (tfd :int))
