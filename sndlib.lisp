@@ -111,11 +111,6 @@
 (defcfun ("mus_sound_close_input" mus-sound-close-input) :int (fd :int))
 (defcfun ("mus_sound_close_output" mus-sound-close-output) :int (fd :int) (bytes-of-data :double))
 
-;TODO
-;#define mus_sound_seek_frame(Ifd, Frm) mus_file_seek_frame(Ifd, Frm)
-;#define mus_sound_read(Fd, Beg, End, Chans, Bufs) mus_file_read(Fd, Beg, End, Chans, Bufs)
-;#define mus_sound_write(Fd, Beg, End, Chans, Bufs) mus_file_write(Fd, Beg, End, Chans, Bufs)
-
 (defcfun ("mus_sound_maxamps" mus-sound-maxamps) :double (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
 (defcfun ("mus_sound_set_maxamps" mus-sound-set-maxamps) :int (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
 (defcfun ("mus_sound_maxamp_exists" mus-sound-maxamp-exists) :bool (ifile :string))
@@ -129,102 +124,101 @@
 
 
 
-/* -------- audio.c -------- */
+;; -------- audio.c --------
 
-MUS_EXPORT char *mus_audio_describe(void);
-MUS_EXPORT int mus_audio_open_output(int dev, int srate, int chans, int format, int size);
-MUS_EXPORT int mus_audio_open_input(int dev, int srate, int chans, int format, int size);
-MUS_EXPORT int mus_audio_write(int line, char *buf, int bytes);
-MUS_EXPORT int mus_audio_close(int line);
-MUS_EXPORT int mus_audio_read(int line, char *buf, int bytes);
+(defcfun ("mus_audio_describe" mus-audio-describe) :string)
+(defcfun ("mus_audio_open_output" mus-audio-open-output) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
+(defcfun ("mus_audio_open_input" mus-audio-open-input) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
+(defcfun ("mus_audio_write" mus-audio-write :int (line :int) (buffer (:pointer :string)) (bytes :int)))
+(defcfun ("mus_audio_close" mus-audio-close :int (line :int)))
+(defcfun ("mus_audio_read" mus-audio-read :int (line :int) (buffer (:pointer :string)) (bytes :int)))
 
-MUS_EXPORT int mus_audio_write_buffers(int line, int frames, int chans, mus_sample_t **bufs, int output_format, bool clipped);
-MUS_EXPORT int mus_audio_read_buffers(int line, int frames, int chans, mus_sample_t **bufs, int input_format);
-MUS_EXPORT int mus_audio_initialize(void);
-MUS_EXPORT int mus_audio_reinitialize(void); /* 29-Aug-01 for CLM/Snd bugfix? */
-MUS_EXPORT int mus_audio_systems(void);
-MUS_EXPORT char *mus_audio_moniker(void);
-MUS_EXPORT int mus_audio_api(void);
-MUS_EXPORT int mus_audio_compatible_format(int dev);
+(defcfun ("mus_audio_write_buffers" mus-audio-write-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :bool))
+(defcfun ("mus_audio_read_buffers" mus-audio-read-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :bool))
+(defcfun ("mus_audio_initialize" mus-audio-initialize) :int)
+(defcfun ("mus_audio_reinitialize" mus-audio-reinitialize) :int)
+(defcfun ("mus_audio_systems" mus-audio-systems) :int)
+(defcfun ("mus_audio_moniker" mus-audio-moniker) :string)
+(defcfun ("mus_audio_api" mus-audio-api) :int)
+(defcfun ("mus_audio_compatible_format" mus-audio-compatible-format) :int)
 
-MUS_EXPORT void mus_oss_set_buffers(int num, int size);
+(defcfun ("mus_oss_set_buffers" mus-oss-set-buffers) :void (nume :int) (size :int))
 
-MUS_EXPORT char *mus_alsa_playback_device(void);
-MUS_EXPORT char *mus_alsa_set_playback_device(const char *name);
-MUS_EXPORT char *mus_alsa_capture_device(void);
-MUS_EXPORT char *mus_alsa_set_capture_device(const char *name);
-MUS_EXPORT char *mus_alsa_device(void);
-MUS_EXPORT char *mus_alsa_set_device(const char *name);
-MUS_EXPORT int mus_alsa_buffer_size(void);
-MUS_EXPORT int mus_alsa_set_buffer_size(int size);
-MUS_EXPORT int mus_alsa_buffers(void);
-MUS_EXPORT int mus_alsa_set_buffers(int num);
-MUS_EXPORT bool mus_alsa_squelch_warning(void);
-MUS_EXPORT bool mus_alsa_set_squelch_warning(bool val);
+(defcfun ("mus_alsa_playback_device" mus-alsa-playback-devices) :string)
+(defcfun ("mus_alsa_set_playback_device" mus-alsa-set-playback-device) :string (name :string))
+(defcfun ("mus_alsa_capture_device" mus-alsa-capture-device) :string)
+(defcfun ("mus_alsa_set_capture_device" mus-alsa-set-capture-device) :string (name :string))
+(defcfun ("mus_alsa_device" mus-alsa-device) :string)
+(defcfun ("mus_alsa_set_device" mus-alsa-set-device :string (name :string)))
+(defcfun ("mus_alsa_buffer_size" mus-alsa-buffer-size) :int)
+(defcfun ("mus_alsa_set_buffer_size" mus-alsa-set-buffer-size) :int (size :int))
+(defcfun ("mus_alsa_buffers" mus-alsa-buffers) :int)
+(defcfun ("mus_alsa_set_buffers" mus-alsa-set-buffers) :int (num :int))
+(defcfun ("mus_alsa_squelch_warning" mus-alsa-squelch-warning) :bool)
+(defcfun ("mus_alsa_set_squelch_warning" mus-alsa-set-squelch-warning) :bool (val :bool))
 
-MUS_EXPORT int mus_audio_device_channels(int dev);
-MUS_EXPORT int mus_audio_device_format(int dev);
+(defcfun ("mus_audio_device_channels" mus-audio-device-channels) :int (dev :int))
+(defcfun ("mus_audio_device_format" mus-audio-device-format) :int (dev :int))
 
+;; -------- io.c --------
 
+(defcfun ("mus_file_open_descriptors" mus-file-open-descriptors) :int (tfd :int) (arg :string) (df :int) (ds :int) (dl :double) (cd :int) (dt :int))
+(defcfun ("mus_file_open_read" mus-file-open-read) :int (arg :string))
+(defcfun ("mus_file_probe" mus-file-probe) :bool (arg :string))
+(defcfun ("mus_file_open_write" mus-file-open-write) :int (arg :string))
+(defcfun ("mus_file_create" mus-file-creat) :int (arg :string))
+(defcfun ("mus_file_reopen_write" mus-file-reopen-write) :int (arg :string))
+(defcfun ("mus_file_close" mus-file-close) :int (fd :int))
+(defcfun ("mus_file_seek_frame" mus-file-seek-frame) :double (tfd :int) (frame :double))
+(defcfun ("mus_file_read" mus-file-read) :double (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
+(defcfun ("mus_file_read_chans" mus-file-read-chans) :double (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (cm (:pointer :double)))
+(defcfun ("mus_file_write" mus-file-write) :int (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
+(defcfun ("mus_file_read_any" mus-file-read-any) :double (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (cm (:pointer :double)))
+(defcfun ("mus_file_read_file" mus-file-read-file) :double (tfd :int) (bg :double) (chans :int) (nints :double) (bufs (:pointer :double)))
+(defcfun ("mus_file_read_buffer" mus-file-read-buffer) :double (charbuf-data-format :int) (beg :double) (chans :int) (nints :double) (bufs (:pointer :double)) (charbuf :string))
+(defcfun ("mus_file_write_file" mus-file-write-file) :int (tfd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
+(defcfun ("mus_file_write_buffer" mus-file-write-buffer) :int (charbuf-data-format :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (charbuf :string) (clipped :bool))
+(defcfun ("mus_expand_filename" mus-expand-filename) :string (name :string))
+(defcfun ("mus_getcwd" mus-getcwd) :string)
 
-/* -------- io.c -------- */
+(defcfun ("mus_clipping" mus-clipping) :bool)
+(defcfun ("mus_set_clipping" mus-set-clipping) :bool (new-value :bool))
+(defcfun ("mus_file_clipping" mus-file-clipping) :bool (tfd :int))
+(defcfun ("mus_file_set_clipping" mus-file-set-clipping) :int (tfd :int) (clipped :bool))
 
-MUS_EXPORT int mus_file_open_descriptors(int tfd, const char *arg, int df, int ds, mus_long_t dl, int dc, int dt);
-MUS_EXPORT int mus_file_open_read(const char *arg);
-MUS_EXPORT bool mus_file_probe(const char *arg);
-MUS_EXPORT int mus_file_open_write(const char *arg);
-MUS_EXPORT int mus_file_create(const char *arg);
-MUS_EXPORT int mus_file_reopen_write(const char *arg);
-MUS_EXPORT int mus_file_close(int fd);
-MUS_EXPORT mus_long_t mus_file_seek_frame(int tfd, mus_long_t frame);
-MUS_EXPORT mus_long_t mus_file_read(int fd, mus_long_t beg, mus_long_t end, int chans, mus_sample_t **bufs);
-MUS_EXPORT mus_long_t mus_file_read_chans(int fd, mus_long_t beg, mus_long_t end, int chans, mus_sample_t **bufs, mus_sample_t **cm);
-MUS_EXPORT int mus_file_write(int tfd, mus_long_t beg, mus_long_t end, int chans, mus_sample_t **bufs);
-MUS_EXPORT mus_long_t mus_file_read_any(int tfd, mus_long_t beg, int chans, mus_long_t nints, mus_sample_t **bufs, mus_sample_t **cm);
-MUS_EXPORT mus_long_t mus_file_read_file(int tfd, mus_long_t beg, int chans, mus_long_t nints, mus_sample_t **bufs);
-MUS_EXPORT mus_long_t mus_file_read_buffer(int charbuf_data_format, mus_long_t beg, int chans, mus_long_t nints, mus_sample_t **bufs, char *charbuf);
-MUS_EXPORT int mus_file_write_file(int tfd, mus_long_t beg, mus_long_t end, int chans, mus_sample_t **bufs);
-MUS_EXPORT int mus_file_write_buffer(int charbuf_data_format, mus_long_t beg, mus_long_t end, int chans, mus_sample_t **bufs, char *charbuf, bool clipped);
-MUS_EXPORT char *mus_expand_filename(const char *name);
-MUS_EXPORT char *mus_getcwd(void);
+(defcfun ("mus_file_set_header_type" mus-file-set-header-type) :int (tfd :int) (type :int))
+(defcfun ("mus_file_header_type" mus-file-header-type) :int (tfd :int))
+(defcfun ("mus_file_fd_name" mus-file-fd-name) :string (tfd :int))
+(defcfun ("mus_file_set_chans" mus-file-set-chans) :int (tfd :int) (chans :int))
 
-MUS_EXPORT bool mus_clipping(void);
-MUS_EXPORT bool mus_set_clipping(bool new_value);
-MUS_EXPORT bool mus_file_clipping(int tfd);
-MUS_EXPORT int mus_file_set_clipping(int tfd, bool clipped);
+(defcfun ("mus_file_prescaler" mus-file-prescaler) :double (tfd :int))
+(defcfun ("mus_file_set_prescaler" mus-file-set-prescaler) :double (tfd :int) (val :double))
+(defcfun ("mus_prescaler" mus-prescaler) :double)
+(defcfun ("mus_set_prescaler" mus-set-prescaler) :double (new-value :double))
 
-MUS_EXPORT int mus_file_set_header_type(int tfd, int type);
-MUS_EXPORT int mus_file_header_type(int tfd);
-MUS_EXPORT char *mus_file_fd_name(int tfd);
-MUS_EXPORT int mus_file_set_chans(int tfd, int chans);
+(defcfun ("mus_iclamp" mus-clamp) :int (lo :int) (val :int) (hi :int))
+(defcfun ("mus_oclamp" mus-oclamp) :double (lo :double) (val :double) (hi :double))
+(defcfun ("mus_fclamp" mus-fclamp) :double (lo :double) (val :double) (hi :double))
 
-MUS_EXPORT mus_float_t mus_file_prescaler(int tfd);
-MUS_EXPORT mus_float_t mus_file_set_prescaler(int tfd, mus_float_t val);
-MUS_EXPORT mus_float_t mus_prescaler(void);
-MUS_EXPORT mus_float_t mus_set_prescaler(mus_float_t new_value);
+;;todo
+;; /* for CLM */
+;; /* these are needed to clear a saved lisp image to the just-initialized state */
+;; (defcfun void mus_reset_io_c(void);
+;; (defcfun void mus_reset_headers_c(void);
+;; (defcfun void mus_reset_audio_c(void);
 
-MUS_EXPORT int mus_iclamp(int lo, int val, int hi);
-MUS_EXPORT mus_long_t mus_oclamp(mus_long_t lo, mus_long_t val, mus_long_t hi);
-MUS_EXPORT mus_float_t mus_fclamp(mus_float_t lo, mus_float_t val, mus_float_t hi);
+;; (defcfun int mus_samples_peak(unsigned char *data, int bytes, int chans, int format, mus_float_t *maxes);
+;; (defcfun int mus_samples_bounds(unsigned char *data, int bytes, int chan, int chans, int format, mus_float_t *min_samp, mus_float_t *max_samp);
 
-/* for CLM */
-/* these are needed to clear a saved lisp image to the just-initialized state */
-MUS_EXPORT void mus_reset_io_c(void);
-MUS_EXPORT void mus_reset_headers_c(void);
-MUS_EXPORT void mus_reset_audio_c(void);
+;; (defcfun mus_long_t mus_max_malloc(void);
+;; (defcfun mus_long_t mus_set_max_malloc(mus_long_t new_max);
+;; (defcfun mus_long_t mus_max_table_size(void);
+;; (defcfun mus_long_t mus_set_max_table_size(mus_long_t new_max);
 
-MUS_EXPORT int mus_samples_peak(unsigned char *data, int bytes, int chans, int format, mus_float_t *maxes);
-MUS_EXPORT int mus_samples_bounds(unsigned char *data, int bytes, int chan, int chans, int format, mus_float_t *min_samp, mus_float_t *max_samp);
-
-MUS_EXPORT mus_long_t mus_max_malloc(void);
-MUS_EXPORT mus_long_t mus_set_max_malloc(mus_long_t new_max);
-MUS_EXPORT mus_long_t mus_max_table_size(void);
-MUS_EXPORT mus_long_t mus_set_max_table_size(mus_long_t new_max);
-
-MUS_EXPORT char *mus_strdup(const char *str);
-MUS_EXPORT int mus_strlen(const char *str);
-MUS_EXPORT bool mus_strcmp(const char *str1, const char *str2);
-MUS_EXPORT char *mus_strcat(char *errmsg, const char *str, int *err_size);
+;; (defcfun char *mus_strdup(const char *str);
+;; (defcfun int mus_strlen(const char *str);
+;; (defcfun bool mus_strcmp(const char *str1, const char *str2);
+;; (defcfun char *mus_strcat(char *errmsg, const char *str, int *err_size);
 
 
 ;;todo
