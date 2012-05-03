@@ -146,7 +146,7 @@
 
 (defcfun ("mus_oss_set_buffers" mus-oss-set-buffers) :void (nume :int) (size :int))
 
-(defcfun ("mus_alsa_playback_device" mus-alsa-playback-devices) :string)
+(defcfun ("mus_alsa_playback_device" mus-alsa-playback-device) :string)
 (defcfun ("mus_alsa_set_playback_device" mus-alsa-set-playback-device) :string (name :string))
 (defcfun ("mus_alsa_capture_device" mus-alsa-capture-device) :string)
 (defcfun ("mus_alsa_set_capture_device" mus-alsa-set-capture-device) :string (name :string))
