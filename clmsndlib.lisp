@@ -2,19 +2,18 @@
 (in-package #:clmsndlib)
 
 (defun play-file (filename)
-  (mus-sound-initialize)
-
   (let ((fd (mus-sound-open-input filename)))
     (unless (= fd -1)
       (let* ((chans (mus-sound-chans filename))
 	     (srate (mus-sound-srate filename))
 	     (frames (mus-sound-frames filename))
 	     (outbytes (* *buffer-size* chans 2))
-	     (bufs (foreign-alloc :double :count chans))
+	     (bufs (foreign-alloc :pointer :count chans))
 	     (obuf (foreign-alloc :short :count (* *buffer-size* chans)))
-	     (afd))
+	     (afd 0))
 	(loop for i from 0 below chans
-	   do (setf (mem-aref bufs :double i) (foreign-alloc :double *buffer-size*)))
+	   do (setf (mem-aref bufs :pointer i) (foreign-alloc :double :count *buffer-size*)))
+	(break "chans: ~a srate: ~a frames: ~a outbytes: ~a" chans srate frames outbytes)
 	(setf afd (mus-audio-open-output +mus-audio-default+ srate chans +mus-audio-compatible-format+ outbytes))
 	(unless (= afd -1)
 	  (loop for i below frames by *buffer-size*
@@ -22,8 +21,8 @@
 	     do (loop for k below *buffer-size*
 		   for j by chans
 		   do (loop for n below chans
-			 do (setf (mem-aref obuf :short (+ j n) 
-					    (mus-sample-to-short (mem-aref (mem-aref bufs :pointer n) :double k))))))
+			 do (setf (mem-aref obuf :short (+ j n)) 
+					    (mus-sample-to-short (mem-aref (mem-aref bufs :pointer n) :double k)))))
 	     do (mus-audio-write afd obuf outbytes))
 	  (mus-audio-close afd)
 	  (loop for i below chans

@@ -1,22 +1,29 @@
 (in-package #:clmsndlib)
 
-;;todo
-;; enum {MUS_UNSUPPORTED, MUS_NEXT, MUS_AIFC, MUS_RIFF, MUS_RF64, MUS_BICSF, MUS_NIST, MUS_INRS, MUS_ESPS, MUS_SVX, MUS_VOC, 
-;;       MUS_SNDT, MUS_RAW, MUS_SMP, MUS_AVR, MUS_IRCAM, MUS_SD1, MUS_SPPACK, MUS_MUS10, MUS_HCOM, MUS_PSION, MUS_MAUD,
-;;       MUS_IEEE, MUS_MATLAB, MUS_ADC, MUS_MIDI, MUS_SOUNDFONT, MUS_GRAVIS, MUS_COMDISCO, MUS_GOLDWAVE, MUS_SRFS,
-;;       MUS_MIDI_SAMPLE_DUMP, MUS_DIAMONDWARE, MUS_ADF, MUS_SBSTUDIOII, MUS_DELUSION,
-;;       MUS_FARANDOLE, MUS_SAMPLE_DUMP, MUS_ULTRATRACKER, MUS_YAMAHA_SY85, MUS_YAMAHA_TX16W, MUS_DIGIPLAYER,
-;;       MUS_COVOX, MUS_AVI, MUS_OMF, MUS_QUICKTIME, MUS_ASF, MUS_YAMAHA_SY99, MUS_KURZWEIL_2000,
-;;       MUS_AIFF, MUS_PAF, MUS_CSL, MUS_FILE_SAMP, MUS_PVF, MUS_SOUNDFORGE, MUS_TWINVQ, MUS_AKAI4,
-;;       MUS_IMPULSETRACKER, MUS_KORG, MUS_NVF, MUS_CAFF, MUS_MAUI, MUS_SDIF, MUS_OGG, MUS_FLAC, MUS_SPEEX, MUS_MPEG,
-;;       MUS_SHORTEN, MUS_TTA, MUS_WAVPACK,  MUS_SOX,
-;;       MUS_NUM_HEADER_TYPES};
+(and #-darwin #+little-endian)
+(defvar +mus-audio-compatible-format+ (foreign-enum-value 'audio-sizes :mus-lshort))
+
+(defun mus-sound-read (fd beg end chans bufs)
+  (mus-file-read fd beg end chans bufs))
+
+(defcenum audio-types
+  :mus-unsupported :mus-next :mus-aifc :mus-riff :mus-rf64 :mus-bicsf :mus-nist :mus-inrs :mus-esps :mus-svx :mus-voc 
+  :mus-sndt :mus-raw :mus-smp :mus-avr :mus-ircam :mus-sd1 :mus-sppack :mus-mus10 :mus-hcom :mus-psion :mus-maud
+  :mus-ieee :mus-matlab :mus-adc :mus-midi :mus-soundfont :mus-gravis :mus-comdisco :mus-goldwave :mus-srfs
+  :mus-midi-sample-dump :mus-diamondware :mus-adf :mus-sbstudioii :mus-delusion
+  :mus-farandole :mus-sample-dump :mus-ultratracker :mus-yamaha-sy85 :mus-yamaha-tx16w :mus-digiplayer
+  :mus-covox :mus-avi :mus-omf :mus-quicktime :mus-asf :mus-yamaha-sy99 :mus-kurzweil-2000
+  :mus-aiff :mus-paf :mus-csl :mus-file-samp :mus-pvf :mus-soundforge :mus-twinvq :mus-akai4
+  :mus-impulsetracker :mus-korg :mus-nvf :mus-caff :mus-maui :mus-sdif :mus-ogg :mus-flac :mus-speex :mus-mpeg
+  :mus-shorten :mus-tta :mus-wavpack :mus-sox
+  :mus-num-header-types)
 
 
-;; enum {MUS_UNKNOWN, MUS_BSHORT, MUS_MULAW, MUS_BYTE, MUS_BFLOAT, MUS_BINT, MUS_ALAW, MUS_UBYTE, MUS_B24INT,
-;;       MUS_BDOUBLE, MUS_LSHORT, MUS_LINT, MUS_LFLOAT, MUS_LDOUBLE, MUS_UBSHORT, MUS_ULSHORT, MUS_L24INT,
-;;       MUS_BINTN, MUS_LINTN, MUS_BFLOAT_UNSCALED, MUS_LFLOAT_UNSCALED, MUS_BDOUBLE_UNSCALED, MUS_LDOUBLE_UNSCALED,
-;;       MUS_NUM_DATA_FORMATS};
+(defcenum audio-sizes 
+  :mus-unknown :mus-bshort :mus-mulaw :mus-byte :mus-bfloat :mus-bint :mus-alaw :mus-ubyte :mus-b24int
+  :mus-bdouble :mus-lshort :mus-lint :mus-lfloat :mus-ldouble :mus-ubshort :mus-ulshort :mus-l24int
+  :mus-bintn :mus-lintn :mus-bfloat-unscaled :mus-lfloat-unscaled :mus-bdouble-unscaled :mus-ldouble-unscaled
+  :mus-num-data-formats)
 
 
 ;; enum {MUS_NO_ERROR, MUS_NO_FREQUENCY, MUS_NO_PHASE, MUS_NO_GEN, MUS_NO_LENGTH,
@@ -63,18 +70,18 @@
 ;; typedef mus_sample_t mus_clip_handler_t(mus_sample_t val);
 ;; MUS_EXPORT mus_clip_handler_t *mus_clip_set_handler(mus_clip_handler_t *new_clip_handler);
 
-(defcfun ("mus_sound_samples" mus-sound-samples) :double (arg :string))
-(defcfun ("mus_sound_frames" mus-sound-frames) :double (arg :string))
+(defcfun ("mus_sound_samples" mus-sound-samples) :ullong (arg :string))
+(defcfun ("mus_sound_frames" mus-sound-frames) :ullong (arg :string))
 (defcfun ("mus_sound_datum_size" mus-sound-datum-size) :int (arg :string))
-(defcfun ("mus_sound_data_location" mus-sound-data-location) :double (arg :string))
+(defcfun ("mus_sound_data_location" mus-sound-data-location) :ullong (arg :string))
 (defcfun ("mus_sound_chans" mus-sound-chans) :int (arg :string))
 (defcfun ("mus_sound_srate" mus-sound-srate) :int (arg :string))
 (defcfun ("mus_sound_header_type" msu-sound-header-type) :int (arg :string))
 (defcfun ("mus_sound_data_format" mus-sound-data-format) :int (arg :string))
 (defcfun ("mus_sound_original_format" mus-sound-original-format) :int (arg :string))
-(defcfun ("mus_sound_comment_start" mus-sound-comment-start) :double (arg :string))
-(defcfun ("mus_sound_comment_end" mus-sound-comment-end) :double (arg :string))
-(defcfun ("mus_sound_length" mus-sound-length) :double (arg :string))
+(defcfun ("mus_sound_comment_start" mus-sound-comment-start) :ullong (arg :string))
+(defcfun ("mus_sound_comment_end" mus-sound-comment-end) :ullong (arg :string))
+(defcfun ("mus_sound_length" mus-sound-length) :ullong (arg :string))
 (defcfun ("mus_sound_fact_samples" mus-sound-fact-samples) :int (arg :string))
 (defcfun ("mus_sound_write_date" mus-sound-write-date) :double (arg :string)) ;;todo time_t
 (defcfun ("mus_sound_type_specifier" mus-sound-type-specifier) :int (arg :string))
@@ -113,7 +120,7 @@
 (defcfun ("mus_sound_close_input" mus-sound-close-input) :int (fd :int))
 (defcfun ("mus_sound_close_output" mus-sound-close-output) :int (fd :int) (bytes-of-data :double))
 
-(defcfun ("mus_sound_maxamps" mus-sound-maxamps) :double (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
+(defcfun ("mus_sound_maxamps" mus-sound-maxamps) :ullong (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
 (defcfun ("mus_sound_set_maxamps" mus-sound-set-maxamps) :int (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
 (defcfun ("mus_sound_maxamp_exists" mus-sound-maxamp-exists) :boolean (ifile :string))
 
@@ -164,22 +171,22 @@
 
 ;; -------- io.c --------
 
-(defcfun ("mus_file_open_descriptors" mus-file-open-descriptors) :int (tfd :int) (arg :string) (df :int) (ds :int) (dl :double) (cd :int) (dt :int))
+(defcfun ("mus_file_open_descriptors" mus-file-open-descriptors) :int (tfd :int) (arg :string) (df :int) (ds :int) (dl :ullong) (cd :int) (dt :int))
 (defcfun ("mus_file_open_read" mus-file-open-read) :int (arg :string))
 (defcfun ("mus_file_probe" mus-file-probe) :boolean (arg :string))
 (defcfun ("mus_file_open_write" mus-file-open-write) :int (arg :string))
 (defcfun ("mus_file_create" mus-file-creat) :int (arg :string))
 (defcfun ("mus_file_reopen_write" mus-file-reopen-write) :int (arg :string))
 (defcfun ("mus_file_close" mus-file-close) :int (fd :int))
-(defcfun ("mus_file_seek_frame" mus-file-seek-frame) :double (tfd :int) (frame :double))
-(defcfun ("mus_file_read" mus-file-read) :double (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
-(defcfun ("mus_file_read_chans" mus-file-read-chans) :double (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (cm (:pointer :double)))
-(defcfun ("mus_file_write" mus-file-write) :int (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
-(defcfun ("mus_file_read_any" mus-file-read-any) :double (fd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (cm (:pointer :double)))
-(defcfun ("mus_file_read_file" mus-file-read-file) :double (tfd :int) (bg :double) (chans :int) (nints :double) (bufs (:pointer :double)))
-(defcfun ("mus_file_read_buffer" mus-file-read-buffer) :double (charbuf-data-format :int) (beg :double) (chans :int) (nints :double) (bufs (:pointer :double)) (charbuf :string))
-(defcfun ("mus_file_write_file" mus-file-write-file) :int (tfd :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)))
-(defcfun ("mus_file_write_buffer" mus-file-write-buffer) :int (charbuf-data-format :int) (beg :double) (end :double) (chans :int) (bufs (:pointer :double)) (charbuf :string) (clipped :boolean))
+(defcfun ("mus_file_seek_frame" mus-file-seek-frame) :ullong (tfd :int) (frame :ullong))
+(defcfun ("mus_file_read" mus-file-read) :ullong (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer))
+(defcfun ("mus_file_read_chans" mus-file-read-chans) :ullong (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer) (cm :pointer))
+(defcfun ("mus_file_write" mus-file-write) :int (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer))
+(defcfun ("mus_file_read_any" mus-file-read-any) :ullong (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer) (cm :pointer))
+(defcfun ("mus_file_read_file" mus-file-read-file) :ullong (tfd :int) (beg :ullong) (chans :int) (nints :ullong) (bufs :pointer))
+(defcfun ("mus_file_read_buffer" mus-file-read-buffer) :ullong (charbuf-data-format :int) (beg :ullong) (chans :int) (nints :ullong) (bufs :pointer) (charbuf :string))
+(defcfun ("mus_file_write_file" mus-file-write-file) :int (tfd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer))
+(defcfun ("mus_file_write_buffer" mus-file-write-buffer) :int (charbuf-data-format :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer) (charbuf :string) (clipped :boolean))
 (defcfun ("mus_expand_filename" mus-expand-filename) :string (name :string))
 (defcfun ("mus_getcwd" mus-getcwd) :string)
 
@@ -193,13 +200,13 @@
 (defcfun ("mus_file_fd_name" mus-file-fd-name) :string (tfd :int))
 (defcfun ("mus_file_set_chans" mus-file-set-chans) :int (tfd :int) (chans :int))
 
-(defcfun ("mus_file_prescaler" mus-file-prescaler) :double (tfd :int))
-(defcfun ("mus_file_set_prescaler" mus-file-set-prescaler) :double (tfd :int) (val :double))
-(defcfun ("mus_prescaler" mus-prescaler) :double)
+(defcfun ("mus_file_prescaler" mus-file-prescaler) :ullong (tfd :int))
+(defcfun ("mus_file_set_prescaler" mus-file-set-prescaler) :ullong (tfd :int) (val :double))
+(defcfun ("mus_prescaler" mus-prescaler) :ullong)
 (defcfun ("mus_set_prescaler" mus-set-prescaler) :double (new-value :double))
 
 (defcfun ("mus_iclamp" mus-clamp) :int (lo :int) (val :int) (hi :int))
-(defcfun ("mus_oclamp" mus-oclamp) :double (lo :double) (val :double) (hi :double))
+(defcfun ("mus_oclamp" mus-oclamp) :double (lo :ullong) (val :ullong) (hi :ullong))
 (defcfun ("mus_fclamp" mus-fclamp) :double (lo :double) (val :double) (hi :double))
 
 ;;todo

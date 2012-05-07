@@ -14,13 +14,7 @@
   #+linux
   4096)
 
-(defconst +mus-audio-default+ 0)
-
-(and #-darwin #+little-endian)
-(defconst +mus-audio-compatible-format+ :mus-lshort)
+(defvar +mus-audio-default+ 0)
 
 (defun mus-sample-to-short (n)
   (* n (ash 1 15)))
-
-(defun mus-sound-read (fd beg end chans bufs)
-  (mus-file-read fd beg end chans bufs))
