@@ -17,15 +17,16 @@
 	(setf afd (mus-audio-open-output +mus-audio-default+ srate chans +mus-audio-compatible-format+ outbytes))
 
 	(unless (= afd -1)
-	  (loop for i below frames by *buffer-size*
+	  (loop for i from 0 below frames by *buffer-size*
 	     do (mus-sound-read fd 0 (- *buffer-size* 1) chans bufs)
-	     do (loop for k below *buffer-size*
-		   for j by chans
-		   do (loop for n below chans
+	     do (loop for k from 0 below *buffer-size*
+		   for j from 0 by chans
+		   do (loop for n from 0 below chans
 			 do (setf (mem-aref obuf :short (+ j n)) 
 					    (mus-sample-to-short (mem-aref (mem-aref bufs :pointer n) :double k)))))
 	     do (mus-audio-write afd obuf outbytes))
 	  (mus-audio-close afd)
+	  (mus-sound-close-input fd)
 	  (loop for i below chans
 	     do (foreign-free (mem-aref bufs :pointer i)))
 	  (foreign-free bufs)

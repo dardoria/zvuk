@@ -1,6 +1,6 @@
 ;;;; zvuk.asd
 
-(asdf:defsystem #:clmsndlib
+(asdf:defsystem #:zvuk
   :serial t
   :depends-on (#:cffi)
   :components ((:file "package")

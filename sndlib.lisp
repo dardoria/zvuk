@@ -1,7 +1,7 @@
 (in-package #:zvuk)
 
 (and #-darwin #+little-endian)
-(defvar +mus-audio-compatible-format+ (foreign-enum-value 'audio-sizes :mus-lshort))
+(defvar +mus-audio-compatible-format+ :mus-lshort)
 (defvar +mus-sample-bits+ 24)
 
 (defun mus-sound-read (fd beg end chans bufs)
@@ -27,29 +27,29 @@
   :mus-num-data-formats)
 
 
-;; enum {MUS_NO_ERROR, MUS_NO_FREQUENCY, MUS_NO_PHASE, MUS_NO_GEN, MUS_NO_LENGTH,
-;;       MUS_NO_FREE, MUS_NO_DESCRIBE, MUS_NO_DATA, MUS_NO_SCALER,
-;;       MUS_MEMORY_ALLOCATION_FAILED, MUS_UNSTABLE_TWO_POLE_ERROR,
-;;       MUS_CANT_OPEN_FILE, MUS_NO_SAMPLE_INPUT, MUS_NO_SAMPLE_OUTPUT,
-;;       MUS_NO_SUCH_CHANNEL, MUS_NO_FILE_NAME_PROVIDED, MUS_NO_LOCATION, MUS_NO_CHANNEL,
-;;       MUS_NO_SUCH_FFT_WINDOW, MUS_UNSUPPORTED_DATA_FORMAT, MUS_HEADER_READ_FAILED,
-;;       MUS_UNSUPPORTED_HEADER_TYPE,
-;;       MUS_FILE_DESCRIPTORS_NOT_INITIALIZED, MUS_NOT_A_SOUND_FILE, MUS_FILE_CLOSED, MUS_WRITE_ERROR,
-;;       MUS_HEADER_WRITE_FAILED, MUS_CANT_OPEN_TEMP_FILE, MUS_INTERRUPTED, MUS_BAD_ENVELOPE,
-
-;;       MUS_AUDIO_CHANNELS_NOT_AVAILABLE, MUS_AUDIO_SRATE_NOT_AVAILABLE, MUS_AUDIO_FORMAT_NOT_AVAILABLE,
-;;       MUS_AUDIO_NO_INPUT_AVAILABLE, MUS_AUDIO_CONFIGURATION_NOT_AVAILABLE, 
-;;       MUS_AUDIO_WRITE_ERROR, MUS_AUDIO_SIZE_NOT_AVAILABLE, MUS_AUDIO_DEVICE_NOT_AVAILABLE,
-;;       MUS_AUDIO_CANT_CLOSE, MUS_AUDIO_CANT_OPEN, MUS_AUDIO_READ_ERROR, 
-;;       MUS_AUDIO_CANT_WRITE, MUS_AUDIO_CANT_READ, MUS_AUDIO_NO_READ_PERMISSION,
-
-;;       MUS_CANT_CLOSE_FILE, MUS_ARG_OUT_OF_RANGE, MUS_WRONG_TYPE_ARG,
-;;       MUS_NO_CHANNELS, MUS_NO_HOP, MUS_NO_WIDTH, MUS_NO_FILE_NAME, MUS_NO_RAMP, MUS_NO_RUN, 
-;;       MUS_NO_INCREMENT, MUS_NO_OFFSET,
-;;       MUS_NO_XCOEFF, MUS_NO_YCOEFF, MUS_NO_XCOEFFS, MUS_NO_YCOEFFS, MUS_NO_RESET, MUS_BAD_SIZE, MUS_CANT_CONVERT,
-;;       MUS_READ_ERROR, MUS_NO_SAFETY,
-;;       MUS_INITIAL_ERROR_TAG};
-
+(defcenum error-codes 
+  :mus-no-error :mus-no-frequency :mus-no-phase :mus-no-gen :mus-no-length
+  :mus-no-free :mus-no-describe :mus-no-data :mus-no-scaler
+  :mus-memory-allocation-failed :mus-unstable-two-pole-error
+  :mus-cant-open-file :mus-no-sample-input :mus-no-sample-output
+  :mus-no-such-channel :mus-no-file-name-provided :mus-no-location :mus-no-channel
+  :mus-no-such-fft-window :mus-unsupported-data-format :mus-header-read-failed
+  :mus-unsupported-header-type
+  :mus-file-descriptors-not-initialized :mus-not-a-sound-file :mus-file-closed :mus-write-error
+  :mus-header-write-failed :mus-cant-open-temp-file :mus-interrupted :mus-bad-envelope
+  
+  :mus-audio-channels-not-available :mus-audio-srate-not-available :mus-audio-format-not-available
+  :mus-audio-no-input-available :mus-audio-configuration-not-available
+  :mus-audio-write-error :mus-audio-size-not-available :mus-audio-device-not-available
+  :mus-audio-cant-close :mus-audio-cant-open :mus-audio-read-error
+  :mus-audio-cant-write :mus-audio-cant-read :mus-audio-no-read-permission
+  
+  :mus-cant-close-file :mus-arg-out-of-range :mus-wrong-type-arg
+  :mus-no-channels :mus-no-hop :mus-no-width :mus-no-file-name :mus-no-ramp :mus-no-run
+  :mus-no-increment :mus-no-offset
+  :mus-no-xcoeff :mus-no-ycoeff :mus-no-xcoeffs :mus-no-ycoeffs :mus-no-reset :mus-bad-size :mus-cant-convert
+  :mus-read-error :mus-no-safety
+  :mus-initial-error-tag)
 
 
 ;;;;-------- sound.c --------
@@ -97,12 +97,27 @@
 (defcfun ("mus_sound_set_samples" mus-sound-set-samples) :int (arg :string) (val :double))
 
 (defcfun ("mus_header_type_name" mus-header-type-name) :string (type :int))
-(defcfun ("mus_data_format_name" mus-data-format-name) :string (format :int))
+
+(defcfun ("mus_data_format_name" %mus-data-format-name) :string (format :int))
+(defun mus-data-format-name (format)
+  (%mus-data-format-name (foreign-enum-value 'audio-sizes format)))
+
 (defcfun ("mus_header_type_to_string" mus-header-type-to-string) :string (type :int))
-(defcfun ("mus_data_format_to_string" mus-data-format-to-string) :string (format :int))
-(defcfun ("mus_data_format_short_name" mus-data-format-short-name) :string (format :int))
+
+(defcfun ("mus_data_format_to_string" %mus-data-format-to-string) :string (format :int))
+(defun mus-data-format-to-string (format)
+  (%mus-data-format-to-string (foreign-enum-value 'audio-sizes format)))
+
+(defcfun ("mus_data_format_short_name" %mus-data-format-short-name) :string (format :int))
+(defun mus-data-format-short-name (format)
+  (%mus-data-format-short-name (foreign-enum-value 'audio-sizes format)))
+
 (defcfun ("mus_sound_comment" mus-sound-comment) :string (name :string))
-(defcfun ("mus_bytes_per_sample" mus-bytes-per-sample) :int (format :int))
+
+(defcfun ("mus_bytes_per_sample" %mus-bytes-per-sample) :int (format :int))
+(defun mus-bytes-per-sample (format)
+  (%mus-bytes-per-sample (foreign-enum-value 'audio-sizes format)))
+
 (defcfun ("mus_sound_duration" mus-sound-duration) :float (arg :string))
 (defcfun ("mus_sound_initialize" mus-sound-initialize) :int)
 (defcfun ("mus_sample_bits" mus-sample-bits) :int)
@@ -138,7 +153,11 @@
 
 (defcfun ("mus_audio_describe" mus-audio-describe) :string)
 (defcfun ("mus_audio_open_output" mus-audio-open-output) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
-(defcfun ("mus_audio_open_input" mus-audio-open-input) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
+
+(defcfun ("mus_audio_open_input" %mus-audio-open-input) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
+(defun mus-audio-open-input (device srate channels format size)
+  (%mus-audio-open-input device srate channels (foreign-enum-value 'audio-sizes format) size))
+  
 (defcfun ("mus_audio_write" mus-audio-write) :int (line :int) (buffer (:pointer :string)) (bytes :int))
 (defcfun ("mus_audio_close" mus-audio-close) :int (line :int))
 (defcfun ("mus_audio_read" mus-audio-read) :int (line :int) (buffer (:pointer :string)) (bytes :int))

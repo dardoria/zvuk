@@ -12,7 +12,7 @@
   #+windows
   8192
   #+linux
-  4096)
+  1024)
 
 (defvar +mus-audio-default+ 0)
 
