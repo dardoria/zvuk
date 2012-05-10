@@ -1,4 +1,4 @@
-;;;; clmsndlib.asd
+;;;; zvuk.asd
 
 (asdf:defsystem #:clmsndlib
   :serial t
@@ -7,5 +7,5 @@
 	       (:file "library")
 	       (:file "sndlib")
 	       (:file "clm")
-               (:file "clmsndlib")))
+               (:file "zvuk")))
 

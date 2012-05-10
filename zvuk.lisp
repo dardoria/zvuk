@@ -1,5 +1,5 @@
 ;;;; clmsndlib.lisp
-(in-package #:clmsndlib)
+(in-package #:zvuk)
 
 (defun play-file (filename)
   (let ((fd (mus-sound-open-input filename)))
