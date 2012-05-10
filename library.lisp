@@ -1,4 +1,4 @@
-(in-package #:clmsndlib)
+(in-package #:zvuk)
 
 (define-foreign-library sndlib
   (:unix (:or "libsndlib.so" "/usr/local/lib/libsndlib.so"))
@@ -17,4 +17,4 @@
 (defvar +mus-audio-default+ 0)
 
 (defun mus-sample-to-short (n)
-  (* n (ash 1 15)))
+  (truncate (* n (ash 1 15))))

@@ -1,5 +1,5 @@
 ;;;; package.lisp
 
-(defpackage #:clmsndlib
+(defpackage #:zvuk
   (:use #:cl #:cffi))
 

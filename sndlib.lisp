@@ -1,7 +1,8 @@
-(in-package #:clmsndlib)
+(in-package #:zvuk)
 
 (and #-darwin #+little-endian)
 (defvar +mus-audio-compatible-format+ (foreign-enum-value 'audio-sizes :mus-lshort))
+(defvar +mus-sample-bits+ 24)
 
 (defun mus-sound-read (fd beg end chans bufs)
   (mus-file-read fd beg end chans bufs))

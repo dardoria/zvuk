@@ -13,8 +13,9 @@
 	     (afd 0))
 	(loop for i from 0 below chans
 	   do (setf (mem-aref bufs :pointer i) (foreign-alloc :double :count *buffer-size*)))
-	(break "chans: ~a srate: ~a frames: ~a outbytes: ~a" chans srate frames outbytes)
+
 	(setf afd (mus-audio-open-output +mus-audio-default+ srate chans +mus-audio-compatible-format+ outbytes))
+
 	(unless (= afd -1)
 	  (loop for i below frames by *buffer-size*
 	     do (mus-sound-read fd 0 (- *buffer-size* 1) chans bufs)
