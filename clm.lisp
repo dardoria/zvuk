@@ -264,83 +264,83 @@
 (defcfun ("mus_all_pass_p" mus-all-pass-p) :boolean (ptr :pointer))
 (defcfun ("mus_all_pass_unmodulated_noz" mus-all-pass-unmodulated-noz) :double (ptr :pointer) (input :double))
 
-;; MUS_EXPORT mus_any *mus_make_moving_average(int size, mus_float_t *line);
-;; MUS_EXPORT bool mus_moving_average_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_moving_average(mus_any *ptr, mus_float_t input);
+(defcfun ("mus_make_moving_average" mus-make-moving-average) :pointer (size :int) (line (:pointer :double)))
+(defcfun ("mus_moving_average_p" mus-moving-average-p) :boolean (ptr :pointer))
+(defcfun ("mus_moving_average" mus-moving-average) :double (ptr :pointer) (input :double))
 
-;; MUS_EXPORT mus_float_t mus_table_lookup(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_float_t mus_table_lookup_unmodulated(mus_any *gen);
-;; MUS_EXPORT mus_any *mus_make_table_lookup(mus_float_t freq, mus_float_t phase, mus_float_t *wave, mus_long_t wave_size, mus_interp_t type);
-;; MUS_EXPORT bool mus_table_lookup_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t *mus_partials_to_wave(mus_float_t *partial_data, int partials, mus_float_t *table, mus_long_t table_size, bool normalize);
-;; MUS_EXPORT mus_float_t *mus_phase_partials_to_wave(mus_float_t *partial_data, int partials, mus_float_t *table, mus_long_t table_size, bool normalize);
+(defcfun ("mus_table_lookup" mus-table-lookup) :double (gen :pointer) (fm :double))
+(defcfun ("mus_table_lookup_unmodulated" mus-table-lookup-unmodulated) :double (gen :pointer))
+(defcfun ("mus_make_table_lookup" mus-make-table-lookup) :pointer (freq :double) (phase :double) (wave (:pointer :double)) (wav-size :ullong) (type mus-interp))
+(defcfun ("mus_table_lookup_p" mus-table-lookup-p) :boolean (ptr :pointer))
+(defcfun ("mus_partials_to_wave" mus-partials-to-wave) (:pointer :double) (partial-data (:pointer :double)) (partials :int) (table (:pointer :double)) (table-size :ullong) (normalize :boolean))
+(defcfun ("mus_phase_partials_to_wave" mus-phase-partials-to-wave) (:pointer :double) (partial-data (:pointer :double)) (partials :int) (table (:pointer :double)) (table-size :ullong) (normalize :boolean))
 
-;; MUS_EXPORT mus_float_t mus_sawtooth_wave(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_any *mus_make_sawtooth_wave(mus_float_t freq, mus_float_t amp, mus_float_t phase);
-;; MUS_EXPORT bool mus_sawtooth_wave_p(mus_any *gen);
+(defcfun ("mus_sawtooth_wave" mus-sawtooth-wave) :double (gen :pointer) (fm :double))
+(defcfun ("mus_make_sawtooth_wave" mus-make-sawtoth-wave) :pointer (freq :double) (phase :double))
+(defcfun ("mus_sawtooth_wave_p" mus-sawtooth-wave-p) :boolean (gen :pointer))
 
-;; MUS_EXPORT mus_float_t mus_square_wave(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_any *mus_make_square_wave(mus_float_t freq, mus_float_t amp, mus_float_t phase);
-;; MUS_EXPORT bool mus_square_wave_p(mus_any *gen);
+(defcfun ("mus_square_wave" mus-square-wave) :double (gen :pointer) (fm :double))
+(defcfun ("mus_make_square_wave" mus-make-square-wave) :pointer (freq :double) (amp :double) (phase :double))
+(defcfun ("mus_square_wave_p" mus-square-wave-p) :boolean (gen :pointer))
 
-;; MUS_EXPORT mus_float_t mus_triangle_wave(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_any *mus_make_triangle_wave(mus_float_t freq, mus_float_t amp, mus_float_t phase);
-;; MUS_EXPORT bool mus_triangle_wave_p(mus_any *gen);
+(defcfun ("mus_triangle_wave" mus-triangle-wave) :double (gen :pointer) (fm :double))
+(defcfun ("mus_make_triangle_wave" mus-make-triangle-wave) :pointer (freq :double) (amp :double) (phase :double))
+(defcfun ("mus_triangle_wave_p" mus-triangle-wave-p) :boolean (ggen :pointer))
 
-;; MUS_EXPORT mus_float_t mus_pulse_train(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_any *mus_make_pulse_train(mus_float_t freq, mus_float_t amp, mus_float_t phase);
-;; MUS_EXPORT bool mus_pulse_train_p(mus_any *gen);
+(defcfun ("mus_pulse_train" mus-pulse-train):double (gen :pointer) (fm :double))
+(defcfun ("mus_make_pulse_train" mus-make-pulse-train) :pointer (freq :double) (amp :double) (phase :double))
+(defcfun ("mus_pulse_train_p" mus-pulse-train-p) :boolean (gen :pointer))
 
-;; MUS_EXPORT void mus_set_rand_seed(unsigned long seed);
-;; MUS_EXPORT unsigned long mus_rand_seed(void);
-;; MUS_EXPORT mus_float_t mus_random(mus_float_t amp);
-;; MUS_EXPORT mus_float_t mus_frandom(mus_float_t amp);
-;; MUS_EXPORT mus_float_t mus_random_no_input(void);
-;; MUS_EXPORT mus_float_t mus_frandom_no_input(void);
-;; MUS_EXPORT int mus_irandom(int amp);
+(defcfun ("mus_set_rand_seed" mus-set-rand-seed) :void (seed :ulong))
+(defcfun ("mus_rand_seed" mus-rand-seed) :ulong)
+(defcfun ("mus_random" mus-random) :double (amp :double))
+(defcfun ("mus_frandom" mus-frandom) :double (amp :double))
+(defcfun ("mus_random_no_input" mus-random-no-input) :double)
+(defcfun ("mus_frandom_no_input" mus-frandom-no-input) :double)
+(defcfun ("mus_irandom" mus-irandom) :int (amp :int))
 
-;; MUS_EXPORT mus_float_t mus_rand(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_any *mus_make_rand(mus_float_t freq, mus_float_t base);
-;; MUS_EXPORT bool mus_rand_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_rand_with_distribution(mus_float_t freq, mus_float_t base, mus_float_t *distribution, int distribution_size);
+(defcfun ("mus_rand" mus-rand) :double (gen :pointer) (fm :double))
+(defcfun ("mus_make_rand" mus-make-rand) :pointer (freq :double) (base :double))
+(defcfun ("mus_rand_p" mus-rand-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_rand_with_distribution" mus-make-rand-with-distribution) :pointer (freq :double) (base :double) (distribution (:pointer :double)) (distribution-size :int))
 
-;; MUS_EXPORT mus_float_t mus_rand_interp(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_any *mus_make_rand_interp(mus_float_t freq, mus_float_t base);
-;; MUS_EXPORT bool mus_rand_interp_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_rand_interp_with_distribution(mus_float_t freq, mus_float_t base, mus_float_t *distribution, int distribution_size);
-;; MUS_EXPORT mus_float_t mus_rand_interp_unmodulated(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_rand_unmodulated(mus_any *ptr);
+(defcfun ("mus_rand_interp" mus-rand-interp) :double (gen :pointer) (fm :double))
+(defcfun ("mus_make_rand_interp" mus-make-rand-interp) :pointer (freq :double) (base :double))
+(defcfun ("mus_rand_interp_p" mus-rand-interp-p) :boolean (ptr :pointer);
+(defcfun ("mus_make_rand_interp_with_distribution" mus-make-rand-interp-with-distribution) :pointer (freq :double) (base :double) (distribution (:pointer :double)) (distribution-size :int))
+(defcfun ("mus_rand_interp_unmodulated" mus-rand-interp-unmodulated) :double (ptr :pointer))
+(defcfun ("mus_rand_unmodulated" mus-rand-unmodulated) :double (ptr :pointer))
 
-;; MUS_EXPORT mus_float_t mus_asymmetric_fm(mus_any *gen, mus_float_t index, mus_float_t fm);
-;; MUS_EXPORT mus_float_t mus_asymmetric_fm_unmodulated(mus_any *gen, mus_float_t index);
-;; MUS_EXPORT mus_float_t mus_asymmetric_fm_no_input(mus_any *gen);
-;; MUS_EXPORT mus_any *mus_make_asymmetric_fm(mus_float_t freq, mus_float_t phase, mus_float_t r, mus_float_t ratio);
-;; MUS_EXPORT bool mus_asymmetric_fm_p(mus_any *ptr);
+(defcfun ("mus_asymmetric_fm" mus-asymmetric-fm) :double (gen :pointer) (index :double) (fm :double))
+(defcfun ("mus_asymmetric_fm_unmodulated" mus-asymmetric-fm-unmodulated) :double (gen :pointer) (index :double))
+(defcfun ("mus_asymmetric_fm_no_input" mus-asymmetric-fm-no-input) :double (gen :pointer))
+(defcfun ("mus_make_asymmetric_fm" mus-make-asymmetric-fm) :pointer (freq :double) (phase :double) (r :double) (ratio :double))
+(defcfun ("mus_asymmetric_fm_p" mus-asymmetric-fm-p) :boolean (ptr :pointer))
 
-;; MUS_EXPORT mus_float_t mus_one_zero(mus_any *gen, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_one_zero(mus_float_t a0, mus_float_t a1);
-;; MUS_EXPORT bool mus_one_zero_p(mus_any *gen);
+(defcfun ("mus_one_zero" mus-one-zero) :double (gen :pointer) (input :double))
+(defcfun ("mus_make_one_zero" mus-make-one-zer) :pointer (a0 :double) (a1 :double))
+(defcfun ("mus_one_zero_p" mus-one-zero-p) :boolean (gen :pointer))
 
-;; MUS_EXPORT mus_float_t mus_one_pole(mus_any *gen, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_one_pole(mus_float_t a0, mus_float_t b1);
-;; MUS_EXPORT bool mus_one_pole_p(mus_any *gen);
+(defcfun ("mus_one_pole" mus-one-pole) :double (gen :pointer) (input :double))
+(defcfun ("mus_make_one_pole" mus-make-one-pole) :pointer (a0 :double) (b1 :double))
+(defcfun ("mus_one_pole_p" mus-one-pole-) :boolean (gen :pointer))
 
-;; MUS_EXPORT mus_float_t mus_two_zero(mus_any *gen, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_two_zero(mus_float_t a0, mus_float_t a1, mus_float_t a2);
-;; MUS_EXPORT bool mus_two_zero_p(mus_any *gen);
-;; MUS_EXPORT mus_any *mus_make_two_zero_from_frequency_and_radius(mus_float_t frequency, mus_float_t radius);
+(defcfun ("mus_two_zero" mus-two-zero) :double (gen :pointer) (input :double))
+(defcfun ("mus_make_two_zero" mus-make-two-zero) :pointer (a0 :double) (a1 :double) (a2 :double))
+(defcfun ("mus_two_zero_p" mus-two-zero-p) :boolean (gen :pointer))
+(defcfun ("mus_make_two_zero_from_frequency_and_radius" mus-make-two-zero-from-frequency-and-radius) :pointer (frequency :double) (radius :double))
 
-;; MUS_EXPORT mus_float_t mus_two_pole(mus_any *gen, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_two_pole(mus_float_t a0, mus_float_t b1, mus_float_t b2);
-;; MUS_EXPORT bool mus_two_pole_p(mus_any *gen);
-;; MUS_EXPORT mus_any *mus_make_two_pole_from_frequency_and_radius(mus_float_t frequency, mus_float_t radius);
+(defcfun ("mus_two_pole" mus-two-pole) :double (gen :pointer) (input :double))
+(defcfun ("mus_make_two_pole" mus-make-two-pole) :pointer (a0 :double) (b1 :double) (b2 :double))
+(defcfun ("mus_two_pole_p" mus-two-pole-p) :boolean (gen :pointer))
+(defcfun ("mus_make_two_pole_from_frequency_and_radius" mus-make-two-pole-from-frequency-and-radius) :pointer (frequency :double) (radius :double))
 
-;; MUS_EXPORT mus_float_t mus_formant(mus_any *ptr, mus_float_t input); 
-;; MUS_EXPORT mus_any *mus_make_formant(mus_float_t frequency, mus_float_t radius);
-;; MUS_EXPORT bool mus_formant_p(mus_any *ptr);
-;; MUS_EXPORT void mus_set_formant_radius_and_frequency(mus_any *ptr, mus_float_t radius, mus_float_t frequency);
-;; MUS_EXPORT mus_float_t mus_formant_with_frequency(mus_any *ptr, mus_float_t input, mus_float_t freq_in_radians);
-;; MUS_EXPORT mus_float_t mus_formant_bank(mus_float_t *amps, mus_any **formants, mus_float_t inval, int size);
+(defcfun ("mus_formant" mus-formant):double (ptr :pointer) (input :double))
+(defcfun ("mus_make_formant" mus-make-formant) :pointer (frequency :double) (radius :double))
+(defcfun ("mus_formant_p" mus-formant-p) :boolean (ptr :pointer))
+(defcfun ("mus_set_formant_radius_and_frequency" mus-set-formant-radius-and-frequency) :void (ptr :pointer) (radius :double) (frequence :double))
+(defcfun ("mus_formant_with_frequency" mus-formant-with-frequency) :double (ptr :pointer) (input :double) (freq-in-radians :double))
+(defcfun ("mus_formant_bank" mus-formant-bank) :double (amps (:pointer :double)) (formants (:pointer :pointer)) (inval :double) (size :int))
 
 ;; MUS_EXPORT mus_float_t mus_firmant(mus_any *ptr, mus_float_t input);
 ;; MUS_EXPORT mus_any *mus_make_firmant(mus_float_t frequency, mus_float_t radius);
