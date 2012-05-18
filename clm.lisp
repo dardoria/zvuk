@@ -86,7 +86,8 @@
     :none :linear :sinusoidal :all-pass 
     :lagrange :bezier :hermite :num-interps)
 
-;; typedef enum {MUS_ENV_LINEAR, MUS_ENV_EXPONENTIAL, MUS_ENV_STEP} mus_env_t;
+(defcenum :mus-env
+    :mus-env-linear :mus-env-exponential :mus-env-step)
 
 ;; typedef enum {MUS_RECTANGULAR_WINDOW, MUS_HANN_WINDOW, MUS_WELCH_WINDOW, MUS_PARZEN_WINDOW, MUS_BARTLETT_WINDOW,
 ;; 	      MUS_HAMMING_WINDOW, MUS_BLACKMAN2_WINDOW, MUS_BLACKMAN3_WINDOW, MUS_BLACKMAN4_WINDOW,
@@ -99,7 +100,8 @@
 ;; 	      MUS_NUM_FFT_WINDOWS} mus_fft_window_t;
 
 ;; typedef enum {MUS_SPECTRUM_IN_DB, MUS_SPECTRUM_NORMALIZED, MUS_SPECTRUM_RAW} mus_spectrum_t;
-;; typedef enum {MUS_CHEBYSHEV_EITHER_KIND, MUS_CHEBYSHEV_FIRST_KIND, MUS_CHEBYSHEV_SECOND_KIND} mus_polynomial_t;
+(defcenum :mus-polynomial
+    :mus-chebyshev-either-kind :mus-chebyshev-first-kind :mus-chebyshev-second-kind)
 
 ;; #if defined(__GNUC__) && (!(defined(__cplusplus)))
 ;;   #define MUS_RUN(GEN, ARG_1, ARG_2) ({ mus_any *_clm_h_1 = (mus_any *)(GEN); \
@@ -342,102 +344,107 @@
 (defcfun ("mus_formant_with_frequency" mus-formant-with-frequency) :double (ptr :pointer) (input :double) (freq-in-radians :double))
 (defcfun ("mus_formant_bank" mus-formant-bank) :double (amps (:pointer :double)) (formants (:pointer :pointer)) (inval :double) (size :int))
 
-;; MUS_EXPORT mus_float_t mus_firmant(mus_any *ptr, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_firmant(mus_float_t frequency, mus_float_t radius);
-;; MUS_EXPORT bool mus_firmant_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_firmant_with_frequency(mus_any *ptr, mus_float_t input, mus_float_t freq_in_radians);
+(defcenum ("mus_firmant" mus-firmant) :double (ptr :pointer) (input :double))
+(defcenum ("mus_make_firmant" mus-make-firmant) :pointer (frequence :double) (radius :double))
+(defcenum ("mus_firmant_p" mus-firmant-p) :boolean (ptr :pointer))
+(defcenum ("mus_firmant_with_frequency" mus-firmant-with-frequency) :double (ptr :pointer) (input :double) (freq-in-radians :double))
 
-;; MUS_EXPORT mus_float_t mus_filter(mus_any *ptr, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_filter(int order, mus_float_t *xcoeffs, mus_float_t *ycoeffs, mus_float_t *state);
-;; MUS_EXPORT bool mus_filter_p(mus_any *ptr);
+(defcenum ("mus_filter" mus-filter) :double (ptr :pointer) (input :double))
+(defcenum ("mus_make_filter" mus-make-filter) :pointer (order :int) (xcoeffs (:pointer :double)) (ycoeffs (:pointer :double)) (state (:pointer :double)))
+(defcenum ("mus_filter_p" mus-filter-p) :boolean (ptr :pointer))
 
-;; MUS_EXPORT mus_float_t mus_fir_filter(mus_any *ptr, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_fir_filter(int order, mus_float_t *xcoeffs, mus_float_t *state);
-;; MUS_EXPORT bool mus_fir_filter_p(mus_any *ptr);
+(defcenum ("mus_fir_filter" mus-fir-filter) :double (ptr :pointer) (input :double))
+(defcenum ("mus_make_fir_filter" mus-make-fir-filter) :pointer (order :int) (xcoeffs (:pointer :double)) (state (:pointer :double)))
+(defcenum ("mus_fir_filter_p" mus-fir-filter-p) :boolean (ptr :pointer))
 
-;; MUS_EXPORT mus_float_t mus_iir_filter(mus_any *ptr, mus_float_t input);
-;; MUS_EXPORT mus_any *mus_make_iir_filter(int order, mus_float_t *ycoeffs, mus_float_t *state);
-;; MUS_EXPORT bool mus_iir_filter_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t *mus_make_fir_coeffs(int order, mus_float_t *env, mus_float_t *aa);
+(defcenum ("mus_iir_filter" mus-iir-filter) :double (ptr :pointer), (input :double));
+(defcenum ("mus_make_iir_filter" mus-make-iir-filter) :pointer (order :int) (ycoeffs (:pointer :double)) (state (:pointer :double)))
+(defcenum ("mus_iir_filter_p" mus-iir-filter-p) :boolean (ptr :pointer)
+(defcenum ("mus_make_fir_coeffs" mus-make-fir-coeffs) (:pointer :double) (order :int) (env (:pointer :double)) (aa (:pointer :double)))
 
-;; MUS_EXPORT mus_float_t *mus_filter_set_xcoeffs(mus_any *ptr, mus_float_t *new_data);
-;; MUS_EXPORT mus_float_t *mus_filter_set_ycoeffs(mus_any *ptr, mus_float_t *new_data);
-;; MUS_EXPORT int mus_filter_set_order(mus_any *ptr, int order);
+(defcenum ("mus_filter_set_xcoeffs" mus-filter-set-xcoeffs) (:pointer :double) (ptr :pointer) (new-data (:pointer :double)))
+(defcenum ("mus_filter_set_ycoeffs" mus-filter-set-ycoeffs) (:pointer :double) (ptr :pointer) (new-data (:pointer :double)))
+(defcenum ("mus_filter_set_order" mus-filter-set-order) :int (ptr :pointer) (order :int))
 
-;; MUS_EXPORT mus_float_t mus_filtered_comb(mus_any *ptr, mus_float_t input, mus_float_t pm);
-;; MUS_EXPORT mus_float_t mus_filtered_comb_unmodulated(mus_any *ptr, mus_float_t input);
-;; MUS_EXPORT bool mus_filtered_comb_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_filtered_comb(mus_float_t scaler, int size, mus_float_t *line, int line_size, mus_interp_t type, mus_any *filt);
+(defcenum ("mus_filtered_comb" mus-filtered-comb) :double (ptr :pointer) (input :double) (pm :double))
+(defcenum ("mus_filtered_comb_unmodulated" mus-filtered-comb-unmodulated) :double (ptr :pointer) (input :double))
+(defcenum ("mus_filtered_comb_p" mus-filtered-comb-p) :boolean (ptr :pointer))
+(defcenum ("mus_make_filtered_comb" mus-make-filtered-comb) :pointer (scaler :double) (size :int) (line (:pointer :double)) (line-size :int) (type mus-interp) (filter :pointer #|mus_any|#))
 
-;; MUS_EXPORT mus_float_t mus_wave_train(mus_any *gen, mus_float_t fm);
-;; MUS_EXPORT mus_float_t mus_wave_train_unmodulated(mus_any *gen);
-;; MUS_EXPORT mus_any *mus_make_wave_train(mus_float_t freq, mus_float_t phase, mus_float_t *wave, mus_long_t wsize, mus_interp_t type);
-;; MUS_EXPORT bool mus_wave_train_p(mus_any *gen);
+(defcenum ("mus_wave_train" mus-wave-train) :double (gen :pointer) (fm :double))
+(defcenum ("mus_wave_train_unmodulated" mus-wave-train-unmodulated) :double (gen :pointer))
+(defcenum ("mus_make_wave_train" mus-make-wave-train) :pointer (freq :double) (phase :double) (wave (:pointer :double)) (wsize :ullong) (type mus-interp))
+(defcenum ("mus_wave_train_p" mus-wave-train-p) :boolean (gen :pointer))
 
-;; MUS_EXPORT mus_float_t *mus_partials_to_polynomial(int npartials, mus_float_t *partials, mus_polynomial_t kind);
-;; MUS_EXPORT mus_float_t *mus_normalize_partials(int num_partials, mus_float_t *partials);
+(defcenum ("mus_partials_to_polynomial" mus-partials-to-polynomial) (:pointer :double) (npartials :int) (partials (:pointer :double)) (kind :mus-polynomial))
+(defcenum ("mus_normalize_partials" mus-normalize-partials) (:pointer :double) (num-partials :int) (partials (:pointder :double)))
 
-;; MUS_EXPORT mus_any *mus_make_polyshape(mus_float_t frequency, mus_float_t phase, mus_float_t *coeffs, int size, int cheby_choice);
-;; MUS_EXPORT mus_float_t mus_polyshape(mus_any *ptr, mus_float_t index, mus_float_t fm);
-;; #define mus_polyshape_fm(Obj, Fm) mus_polyshape(Obj, 1.0, Fm)
-;; MUS_EXPORT mus_float_t mus_polyshape_unmodulated(mus_any *ptr, mus_float_t index);
-;; #define mus_polyshape_no_input(Obj) mus_polyshape(Obj, 1.0, 0.0)
-;; MUS_EXPORT bool mus_polyshape_p(mus_any *ptr);
+(defcenum ("mus_make_polyshape" mus-make-polyshape) :pointer (frequency :double) (phase :double) (coeffs (:pointer :double)) (size :int) (cheby-choice :int))
+(defcenum ("mus_polyshape" mus-polyshape) :double (ptr :pointer) (index :double) (fm :double))
+;;TODO
+;#define mus_polyshape_fm(Obj, Fm) mus_polyshape(Obj, 1.0, Fm)
+(defcenum ("mus_polyshape_unmodulated" mus-polyshape-unmodulated) :double (ptr :pointer) (index :double))
+;;TODO
+;#define mus_polyshape_no_input(Obj) mus_polyshape(Obj, 1.0, 0.0)
+(defcenum ("mus_polyshape_p" mus-polyshape-p) :boolean (ptr :pointer))
 
-;; MUS_EXPORT mus_any *mus_make_polywave(mus_float_t frequency, mus_float_t *coeffs, int n, int cheby_choice);
-;; MUS_EXPORT bool mus_polywave_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_polywave_unmodulated(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_polywave(mus_any *ptr, mus_float_t fm);
-;; MUS_EXPORT mus_float_t mus_chebyshev_t_sum(mus_float_t x, int n, mus_float_t *tn);
-;; MUS_EXPORT mus_float_t mus_chebyshev_u_sum(mus_float_t x, int n, mus_float_t *un);
-;; MUS_EXPORT mus_float_t mus_chebyshev_tu_sum(mus_float_t x, int n, mus_float_t *tn, mus_float_t *un);
-;; #define mus_polywave_type(Obj) mus_channel(Obj)
+(defcenum ("mus_make_polywave" mus-make-polywave) :pointer (frequency :double) (coeffs (:pointer :double)) (n :int) (cheby-choice :int))
+(defcenum ("mus_polywave_p" mus-polywave-p) :boolean (ptr :pointer))
+(defcenum ("mus_polywave_unmodulated" mus-polywave-unmodulated) :double (ptr :pointer))
+(defcenum ("mus_polywave" mus-polywave) :double (ptr :pointer) (fm :double))
+(defcenum ("mus_chebyshev_t_sum" mus-chebyshev-t-sum) :double (x :double) (n :int) (tn (:pointer :double)))
+(defcenum ("mus_chebyshev_u_sum" mus-chebyshev-u-sum) :double (x :double) (n :int) (un (:pointer :double)))
+(defcenum ("mus_chebyshev_tu_sum" mus-chebyshev-tu-sum) :double(x :double) (n:int)  (tn (:pointer :double)) (un (:pointer :double)))
+;;TODO
+;#define mus_polywave_type(Obj) mus_channel(Obj)
 
-;; MUS_EXPORT mus_float_t mus_env(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_env(mus_float_t *brkpts, int npts, double scaler, double offset, double base, double duration, mus_long_t end, mus_float_t *odata);
-;; MUS_EXPORT bool mus_env_p(mus_any *ptr);
-;; MUS_EXPORT double mus_env_interp(double x, mus_any *env);
-;; MUS_EXPORT mus_long_t *mus_env_passes(mus_any *gen);        /* for Snd */
-;; MUS_EXPORT double *mus_env_rates(mus_any *gen);        /* for Snd */
-;; MUS_EXPORT double mus_env_offset(mus_any *gen);        /* for Snd */
-;; MUS_EXPORT double mus_env_scaler(mus_any *gen);        /* for Snd */
-;; MUS_EXPORT double mus_env_initial_power(mus_any *gen); /* for Snd */
-;; MUS_EXPORT int mus_env_breakpoints(mus_any *gen);      /* for Snd */
-;; MUS_EXPORT mus_float_t mus_env_any(mus_any *e, mus_float_t (*connect_points)(mus_float_t val));
-;; #define mus_make_env_with_length(Brkpts, Pts, Scaler, Offset, Base, Length) mus_make_env(Brkpts, Pts, Scaler, Offset, Base, 0.0, (Length) - 1, NULL)
-;; MUS_EXPORT mus_float_t mus_env_linear(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_env_exponential(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_env_step(mus_any *ptr);
-;; MUS_EXPORT mus_env_t mus_env_type(mus_any *ptr);
+(defcenum ("mus_env" mus-env) :double (ptr :pointer))
+(defcenum ("mus_make_env" mus-make-env) :pointer (brkpts (:pointer :double)) (npts :int) (scaler :double) (offset :double) (base :double) (duration :double) (end :ullong) (odata (:pointer :double)))
+(defcenum ("mus_env_p" mus-env-p) :boolean (ptr :pointer))
+(defcenum ("mus_env_interp" mus-env-interp) :double (x :couble) (env :pointer #|mus_any|#))
+(defcenum ("mus_env_passes" mus-env-passes) (:pointer :ullong) (gen :pointer)) ;for Snd
+(defcenum ("mus_env_rates" mus-env-rates) (:pointer :double) (gen :pointer));        /* for Snd */
+(defcenum ("mus_env_offset" mus-env-offset) :double (gen :pointer));        /* for Snd */
+(defcenum ("mus_env_scaler" mus-env-scaler) :double (gen :pointer));        /* for Snd */
+(defcenum ("mus_env_initial_power" mus-env-initial-power) :double (gen :pointer)); /* for Snd */
+(defcenum ("mus_env_breakpoints" mus-env-breakpoints) :int (gen :pointer));      /* for Snd */
+(defcenum ("mus_env_any" mus-env-any) :double (e :pointer) (connect-points (:pointer :double)) (val :double))
+;TODO
+;#define mus_make_env_with_length(Brkpts, Pts, Scaler, Offset, Base, Length) mus_make_env(Brkpts, Pts, Scaler, Offset, Base, 0.0, (Length) - 1, NULL)
+(defcenum ("mus_env_linear" mus-env-linear) :double (ptr :pointer))
+(defcenum ("mus_env_exponential" mus-env-exponential) :double (ptr :pointer))
+(defcenum ("mus_env_step" mus-env-step) :double (ptr :pointer))
+(defcenum ("mus_env_type" mus-env-type) :mus-env (ptr :pointer))
 
-;; MUS_EXPORT bool mus_frame_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_empty_frame(int chans);
-;; MUS_EXPORT mus_any *mus_make_frame(int chans, ...);
-;; MUS_EXPORT mus_any *mus_frame_add(mus_any *f1, mus_any *f2, mus_any *res);
-;; MUS_EXPORT mus_any *mus_frame_multiply(mus_any *f1, mus_any *f2, mus_any *res);
-;; MUS_EXPORT mus_any *mus_frame_scale(mus_any *uf1, mus_float_t scl, mus_any *ures);
-;; MUS_EXPORT mus_any *mus_frame_offset(mus_any *uf1, mus_float_t offset, mus_any *ures);
-;; MUS_EXPORT mus_float_t mus_frame_ref(mus_any *f, int chan);
-;; MUS_EXPORT mus_float_t mus_frame_set(mus_any *f, int chan, mus_float_t val);
-;; MUS_EXPORT mus_any *mus_frame_copy(mus_any *uf);
-;; MUS_EXPORT mus_float_t mus_frame_fill(mus_any *uf, mus_float_t val);
+(defcenum ("mus_frame_p" mus-frame-p) :boolean (ptr :pointer))
+(defcenum ("mus_make_empty_frame" mus-make-empty-frame) :pointer (chans :int))
+;TODO
+;(defcenum mus_any *mus_make_frame :pointer (int chans, ...);
+(defcenum ("mus_frame_add" mus-frame-add) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcenum ("mus_frame_multiply" mus-frame-multiply) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcenum ("mus_frame_scale" mus-frame-scale) :pointer (uf1 :pointer) (sc1 :pointer) (ures :pointer))
+(defcenum ("mus_frame_offset" mus-frame-offset) :pointer (uf1 :pointer) (offset :double) (ures :pointer))
+(defcenum ("mus_frame_ref" mus-frame-ref) :double (f :pointer) (chan :int))
+(defcenum ("mus_frame_set" mus-frame-set) :double (f :pointer) (chan :int) (val :double))
+(defcenum ("mus_frame_copy" mus-frame-copy) :pointer (uf :pointer))
+(defcenum ("mus_frame_fill" mus-frame-fill) :double (uf :pointer) (val :double))
 
-;; MUS_EXPORT bool mus_mixer_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_empty_mixer(int chans);
-;; MUS_EXPORT mus_any *mus_make_identity_mixer(int chans);
-;; MUS_EXPORT mus_any *mus_make_mixer(int chans, ...);
-;; MUS_EXPORT mus_float_t mus_mixer_ref(mus_any *f, int in, int out);
-;; MUS_EXPORT mus_float_t mus_mixer_set(mus_any *f, int in, int out, mus_float_t val);
-;; MUS_EXPORT mus_any *mus_frame_to_frame(mus_any *f, mus_any *in, mus_any *out);
-;; MUS_EXPORT mus_any *mus_sample_to_frame(mus_any *f, mus_float_t in, mus_any *out);
-;; MUS_EXPORT mus_float_t mus_frame_to_sample(mus_any *f, mus_any *in);
-;; MUS_EXPORT mus_any *mus_mixer_multiply(mus_any *f1, mus_any *f2, mus_any *res);
-;; MUS_EXPORT mus_any *mus_mixer_add(mus_any *f1, mus_any *f2, mus_any *res);
-;; MUS_EXPORT mus_any *mus_mixer_scale(mus_any *uf1, mus_float_t scaler, mus_any *ures);
-;; MUS_EXPORT mus_any *mus_mixer_offset(mus_any *uf1, mus_float_t offset, mus_any *ures);
-;; MUS_EXPORT mus_any *mus_make_scalar_mixer(int chans, mus_float_t scalar);
-;; MUS_EXPORT mus_any *mus_mixer_copy(mus_any *uf);
-;; MUS_EXPORT mus_float_t mus_mixer_fill(mus_any *uf, mus_float_t val);
+(defcenum ("mus_mixer_p" mus-mixer-p) :boolean (ptr :pointer))
+(defcenum ("mus_make_empty_mixer" mus-make-empty-mixer) :pointer (chans :int))
+(defcenum ("mus_make_identity_mixer" mus-make-identity-mixer) :pointer (chans :int))
+;(defcenum mus_any *mus_make_mixer(int chans, ...);
+(defcenum ("mus_mixer_ref" mus-mixer-ref)  :double (f :pointer) (in :int) (out :int))
+(defcenum ("mus_mixer_set" mus-mixer-set) :double (f :pointer) (in :int) (out :int) (val :double))
+(defcenum ("mus_frame_to_frame" mus-frame-to-frame) :pointer (f :pointer) (ln :pointer) (out :pointer))
+(defcenum ("mus_sample_to_frame" mus-sample-to-frame) :pointer (f :pointer) (in :double) (out :pointer))
+(defcenum ("mus_frame_to_sample" mus-frame-to-sample) :double (f :pointer) (in :pointer))
+(defcenum ("mus_mixer_multiply" mus-mixer-multiply) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcenum ("mus_mixer_add" mus-mixer-add) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcenum ("mus_mixer_scale" mus-mixer-scale) :pointer (uf1 :pointer) (scaler :double) (ures :pointer))
+(defcenum ("mus_mixer_offset" mus-mixer-offset) :pointer (uf1 :pointer) (offset :double) (ures :pointer))
+(defcenum ("mus_make_scalar_mixer" mus-make-scalar-mixer) :pointer (chans :int) (scalar :double))
+(defcenum ("mus_mixer_copy" mus-mixer-copy) :pointer (uf :pointer))
+(defcenum ("mus_mixer_fill" mus-mixer-fill) :double (uf :pointer) (val :double))
 
 ;; MUS_EXPORT mus_any *mus_frame_to_frame_mono(mus_any *frame, mus_any *mix, mus_any *out);
 ;; MUS_EXPORT mus_any *mus_frame_to_frame_stereo(mus_any *frame, mus_any *mix, mus_any *out);
