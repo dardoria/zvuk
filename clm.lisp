@@ -89,17 +89,19 @@
 (defcenum :mus-env
     :mus-env-linear :mus-env-exponential :mus-env-step)
 
-;; typedef enum {MUS_RECTANGULAR_WINDOW, MUS_HANN_WINDOW, MUS_WELCH_WINDOW, MUS_PARZEN_WINDOW, MUS_BARTLETT_WINDOW,
-;; 	      MUS_HAMMING_WINDOW, MUS_BLACKMAN2_WINDOW, MUS_BLACKMAN3_WINDOW, MUS_BLACKMAN4_WINDOW,
-;; 	      MUS_EXPONENTIAL_WINDOW, MUS_RIEMANN_WINDOW, MUS_KAISER_WINDOW, MUS_CAUCHY_WINDOW, MUS_POISSON_WINDOW,
-;; 	      MUS_GAUSSIAN_WINDOW, MUS_TUKEY_WINDOW, MUS_DOLPH_CHEBYSHEV_WINDOW, MUS_HANN_POISSON_WINDOW, 
-;; 	      MUS_CONNES_WINDOW, MUS_SAMARAKI_WINDOW, MUS_ULTRASPHERICAL_WINDOW, 
-;; 	      MUS_BARTLETT_HANN_WINDOW, MUS_BOHMAN_WINDOW, MUS_FLAT_TOP_WINDOW,
-;; 	      MUS_BLACKMAN5_WINDOW, MUS_BLACKMAN6_WINDOW, MUS_BLACKMAN7_WINDOW, MUS_BLACKMAN8_WINDOW, MUS_BLACKMAN9_WINDOW, MUS_BLACKMAN10_WINDOW,
-;; 	      MUS_RV2_WINDOW, MUS_RV3_WINDOW, MUS_RV4_WINDOW, MUS_MLT_SINE_WINDOW, MUS_PAPOULIS_WINDOW, MUS_DPSS_WINDOW, MUS_SINC_WINDOW,
-;; 	      MUS_NUM_FFT_WINDOWS} mus_fft_window_t;
+(defcenum :mus-fft-window-type
+    :mus-rectangular-window :mus-hann-window :mus-welch-window :mus-parzen-window :mus-bartlett-window 
+    :mus-hamming-window :mus-blackman2-window :mus-blackman3-window :mus-blackman4-window :mus-exponential-window
+    :mus-riemann-window :mus-kaiser-window :mus-cauchy-window :mus-poisson-window :mus-gaussian-window 
+    :mus-tukey-window :mus-dolph-chebyshev-window :mus-hann-poisson-window :mus-connes-window :mus-samaraki-window 
+    :mus-ultraspherical-window :mus-bartlett-hann-window :mus-bohman-window :mus-flat-top-window :mus-blackman5-window 
+    :mus-blackman6-window :mus-blackman7-window :mus-blackman8-window :mus-blackman9-window :mus-blackman10-window
+    :mus-rv2-window :mus-rv3-window :mus-rv4-window :mus-mlt-sine-window :mus-papoulis-window :mus-dpss-window :mus-sinc-window
+    :mus-num-fft-windows)
 
-;; typedef enum {MUS_SPECTRUM_IN_DB, MUS_SPECTRUM_NORMALIZED, MUS_SPECTRUM_RAW} mus_spectrum_t;
+(defcenum :mus-spectrum-type 
+    :mus-spectrum-in-db :mus-spectrum-normalized :mus-spectrum-raw)
+
 (defcenum :mus-polynomial
     :mus-chebyshev-either-kind :mus-chebyshev-first-kind :mus-chebyshev-second-kind)
 
@@ -446,58 +448,62 @@
 (defcenum ("mus_mixer_copy" mus-mixer-copy) :pointer (uf :pointer))
 (defcenum ("mus_mixer_fill" mus-mixer-fill) :double (uf :pointer) (val :double))
 
-;; MUS_EXPORT mus_any *mus_frame_to_frame_mono(mus_any *frame, mus_any *mix, mus_any *out);
-;; MUS_EXPORT mus_any *mus_frame_to_frame_stereo(mus_any *frame, mus_any *mix, mus_any *out);
-;; MUS_EXPORT mus_any *mus_frame_to_frame_mono_to_stereo(mus_any *frame, mus_any *mix, mus_any *out);
+(defcfun ("mus_frame_to_frame_mono" mus-frame-to-frame-mono) :pointer (frame :pointer) (mix :pointer) (out :pointer))
+(defcfun ("mus_frame_to_frame_stereo" mus-frame-to-stereo) :pointer (frame :pointer) (mix :pointer) (out :pointer))
+(defcfun ("mus_frame_to_frame_mono_to_stereo" mus-frame-to-frame-mono-to-stereo) :pointer (frame :pointer) (mix :pointer) (out :pointer))
 
-;; MUS_EXPORT bool mus_file_to_sample_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_file_to_sample(const char *filename);
-;; MUS_EXPORT mus_any *mus_make_file_to_sample_with_buffer_size(const char *filename, mus_long_t buffer_size);
-;; MUS_EXPORT mus_float_t mus_file_to_sample(mus_any *ptr, mus_long_t samp, int chan);
-;; MUS_EXPORT mus_float_t mus_in_any_from_file(mus_any *ptr, mus_long_t samp, int chan);
+(defcfun ("mus_file_to_sample_p" mus-file-to-sample-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_file_to_sample" mus-make-file-to-sample) :pointer (filename :string))
+(defcfun ("mus_make_file_to_sample_with_buffer_size" mus-make-file-to-sample-with-buffer-size) :pointer (filename :string) (buffer-size :ullong))
+(defcfun ("mus_file_to_sample" mus-file-to-sample) :double (ptr :pointer) (samp :ullong) (chan :int))
+(defcfun ("mus_in_any_from_file" mus-in-any-from-file) :double (ptr :pointer) (samp :ullong) (chna :int))
 
-;; MUS_EXPORT mus_float_t mus_readin(mus_any *rd);
-;; MUS_EXPORT mus_any *mus_make_readin_with_buffer_size(const char *filename, int chan, mus_long_t start, int direction, mus_long_t buffer_size);
-;; #define mus_make_readin(Filename, Chan, Start, Direction) mus_make_readin_with_buffer_size(Filename, Chan, Start, Direction, mus_file_buffer_size())
-;; MUS_EXPORT bool mus_readin_p(mus_any *ptr);
+(defcfun ("mus_readin" mus-readin) :double (rd :pointer))
+(defcfun ("mus_make_readin_with_buffer_size" mus-make-readin-with-buffer-size) :pointer (filename :string) (chan :int) (start :ullong) (direction :int) (buffer-size :ullong))
+;;TODO
+;#define mus_make_readin(Filename, Chan, Start, Direction) mus_make_readin_with_buffer_size(Filename, Chan, Start, Direction, mus_file_buffer_size())
+(defcfun ("mus_readin_p" mus-readin-p) :boolean (ptr :pointer))
 
-;; MUS_EXPORT bool mus_output_p(mus_any *ptr);
-;; MUS_EXPORT bool mus_input_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_in_any(mus_long_t frame, int chan, mus_any *IO);
+(defcfun ("mus_output_p" mus-output-p) :boolean (ptr :pointer))
+(defcfun ("mus_input_p" mus-input-p) :boolean (ptr :pointer))
+(defcfun ("mus_in_any" mus-in-any) :double (frame :ullong) (chan :int) (io :pointer))
 
-;; MUS_EXPORT mus_any *mus_make_file_to_frame(const char *filename);
-;; MUS_EXPORT bool mus_file_to_frame_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_file_to_frame(mus_any *ptr, mus_long_t samp, mus_any *f);
-;; MUS_EXPORT mus_any *mus_make_file_to_frame_with_buffer_size(const char *filename, mus_long_t buffer_size);
+(defcfun ("mus_make_file_to_frame" mus-make-file-to-frame) :pointer (filename :string))
+(defcfun ("mus_file_to_frame_p" mus-file-to-frame-p) :boolean (ptr :pointer))
+(defcfun ("mus_file_to_frame" mus-file-to-frame) :pointer (ptr :pointer) (samp :ullong) (f :pointer))
+(defcfun ("mus_make_file_to_frame_with_buffer_size" mus-make-file-to-frame-with-buffer-size) :pointer (filename :string) (buffer-size :ullong))
 
-;; MUS_EXPORT bool mus_sample_to_file_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_sample_to_file_with_comment(const char *filename, int out_chans, int out_format, int out_type, const char *comment);
-;; #define mus_make_sample_to_file(Filename, Chans, OutFormat, OutType) mus_make_sample_to_file_with_comment(Filename, Chans, OutFormat, OutType, NULL)
-;; MUS_EXPORT mus_float_t mus_sample_to_file(mus_any *ptr, mus_long_t samp, int chan, mus_float_t val);
-;; MUS_EXPORT mus_any *mus_continue_sample_to_file(const char *filename);
-;; MUS_EXPORT int mus_close_file(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_sample_to_file_add(mus_any *out1, mus_any *out2);
+(defcfun ("mus_sample_to_file_p" mus-sample-to-file-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_sample_to_file_with_comment" mus-make-sample-to-file-with-comment) :pointer (filename :string) (out-chans :int) (out-format :int) (out-type :int) (comment :string))
+;TODO
+;#define mus_make_sample_to_file(Filename, Chans, OutFormat, OutType) mus_make_sample_to_file_with_comment(Filename, Chans, OutFormat, OutType, NULL)
+(defcfun ("mus_sample_to_file" mus-sample-to-file) :double (ptr :pointer) (samp :ullong) (chan :int) (val :double))
+(defcfun ("mus_continue_sample_to_file" mus-continue-sample-to-file) :pointer (filename :string))
+(defcfun ("mus_close_file" mus-close-file) :int (ptr :pointer))
+(defcfun ("mus_sample_to_file_add" mus-sample-to-file-add) :pointer (out1 :pointer) (out2 :pointer))
 
-;; MUS_EXPORT mus_float_t mus_out_any(mus_long_t frame, mus_float_t val, int chan, mus_any *IO);
-;; MUS_EXPORT mus_float_t mus_out_any_to_file(mus_any *ptr, mus_long_t samp, int chan, mus_float_t val);
-;; MUS_EXPORT bool mus_frame_to_file_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_frame_to_file(mus_any *ptr, mus_long_t samp, mus_any *data);
-;; MUS_EXPORT mus_any *mus_make_frame_to_file_with_comment(const char *filename, int chans, int out_format, int out_type, const char *comment);
-;; #define mus_make_frame_to_file(Filename, Chans, OutFormat, OutType) mus_make_frame_to_file_with_comment(Filename, Chans, OutFormat, OutType, NULL)
-;; MUS_EXPORT mus_any *mus_continue_frame_to_file(const char *filename);
+(defcfun ("mus_out_any" mus-out-any) :double (frame :ullong) (val :double) (chna :int) (io :pointer))
+(defcfun ("mus_out_any_to_file" mus-aout-any-to-file) :double (ptr :pointer) (samp :ullong) (chan :int) (val :double))
+(defcfun ("mus_frame_to_file_p" mus-frame-to-file-p) :boolean (ptr :pointer))
+(defcfun ("mus_frame_to_file" mus-frame-to-file) :pointer (ptr :pointer) (samp :ullong) (data :pointer))
+(defcfun ("mus_make_frame_to_file_with_comment" mus-make-frame-to-file-with-comment) :pointer (filename :string) (chans :int) (out-format :int) (out-type :int) (comment :string))
+;TODO
+;#define mus_make_frame_to_file(Filename, Chans, OutFormat, OutType) mus_make_frame_to_file_with_comment(Filename, Chans, OutFormat, OutType, NULL)
+(defcfun ("mus_continue_frame_to_file" mus-continue-frame-to-file) :pointer (filename :string))
 
-;; MUS_EXPORT void mus_locsig(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT mus_any *mus_make_locsig(mus_float_t degree, mus_float_t distance, mus_float_t reverb, int chans, mus_any *output, int rev_chans, mus_any *revput, mus_interp_t type);
-;; MUS_EXPORT bool mus_locsig_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_locsig_ref(mus_any *ptr, int chan);
-;; MUS_EXPORT mus_float_t mus_locsig_set(mus_any *ptr, int chan, mus_float_t val);
-;; MUS_EXPORT mus_float_t mus_locsig_reverb_ref(mus_any *ptr, int chan);
-;; MUS_EXPORT mus_float_t mus_locsig_reverb_set(mus_any *ptr, int chan, mus_float_t val);
-;; MUS_EXPORT void mus_move_locsig(mus_any *ptr, mus_float_t degree, mus_float_t distance);
-;; MUS_EXPORT mus_any *mus_locsig_outf(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_locsig_revf(mus_any *ptr);
-;; MUS_EXPORT void *mus_locsig_closure(mus_any *ptr);
+(defcfun ("mus_locsig" mus-locsig) :void (ptr :pointer) (loc :ullong) (val :double))
+(defcfun ("mus_make_locsig" mus-make-locsig) :pointer (degree :double) (distance :double) (reverb :double) (chans :int) (output :pointer) (rev-chans :int) (revput :pointer) (type mus-interp))
+(defcfun ("mus_locsig_p" mus-locsig-p) :boolean (ptr :pointer))
+(defcfun ("mus_locsig_ref" mus-locsig-ref) :double (ptr :pointer) (chan :int))
+(defcfun ("mus_locsig_set" mus-locsig-set) :double (ptr :pointer) (chan :int) (val :double))
+(defcfun ("mus_locsig_reverb_ref" mus-locsig-reverb-ref) :double (ptr :pointer) (chan :int))
+(defcfun ("mus_locsig_reverb_set" mus-locsig-reverb-set) :double (ptr :pointer) (chan :int) (val :double))
+(defcfun ("mus_move_locsig" mus-move-locsig) :void (ptr :pointer) (degree :double) (distance :double))
+(defcfun ("mus_locsig_outf" mus-locsig-outf) :pointer (ptr :pointer))
+(defcfun ("mus_locsig_revf" mus-locsig-revf) :pointer (ptr :pointer))
+(defcfun ("mus_locsig_closure" mus-locsig-closure):void (ptr :pointer))
 
+;TODO maybe?
 ;;   /* these are for the optimizer (run.c) */
 ;; MUS_EXPORT void mus_locsig_mono_no_reverb(mus_any *ptr, mus_long_t loc, mus_float_t val);
 ;; MUS_EXPORT void mus_locsig_mono(mus_any *ptr, mus_long_t loc, mus_float_t val);
@@ -512,49 +518,53 @@
 ;; MUS_EXPORT int mus_locsig_safety(mus_any *ptr);
 ;; MUS_EXPORT void mus_locsig_function_reset(mus_any *ptr);
 
-;; MUS_EXPORT bool mus_move_sound_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_move_sound(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT mus_any *mus_make_move_sound(mus_long_t start, mus_long_t end, int out_channels, int rev_channels,
-;; 					mus_any *doppler_delay, mus_any *doppler_env, mus_any *rev_env,
-;; 					mus_any **out_delays, mus_any **out_envs, mus_any **rev_envs,
-;; 					int *out_map, mus_any *output, mus_any *revput, bool free_arrays, bool free_gens);
-;; MUS_EXPORT mus_any *mus_move_sound_outf(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_move_sound_revf(mus_any *ptr);
-;; MUS_EXPORT void *mus_move_sound_closure(mus_any *ptr);
+(defcfun ("mus_move_sound_p" mus-move-sound-p) :boolean (ptr :pointer))
+(defcfun ("mus_move_sound" mus-move-sound) :double (ptr :pointer) (loc :ullong) (val :double))
+(defcfun ("mus_make_move_sound" mus-make-move-sound) :pointer 
+  (start :ullong) (end :ullong) (out-channels :int) (rev-channels :int) (doppler-delay :pointer) 
+  (doppler-env :pointer) (rev-env :pointer) (out-delays (:pointer :pointer)) (out-envs (:pointer :pointer))
+  (rev-envs (:poiner :pointer)) (out-map :int) (output :pointer) (revput :pointer) (free-arrays :boolean)
+  (free-gens :boolean))
 
-;; MUS_EXPORT mus_any *mus_make_src(mus_float_t (*input)(void *arg, int direction), mus_float_t srate, int width, void *closure);
-;; MUS_EXPORT mus_float_t mus_src(mus_any *srptr, mus_float_t sr_change, mus_float_t (*input)(void *arg, int direction));
-;; MUS_EXPORT bool mus_src_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_src_20(mus_any *srptr, mus_float_t (*input)(void *arg, int direction));
-;; MUS_EXPORT mus_float_t mus_src_05(mus_any *srptr, mus_float_t (*input)(void *arg, int direction));
+(defcfun ("mus_move_sound_outf" mus-move-sound-outf) :pointer (ptr :pointer))
+(defcfun ("mus_move_sound_revf" mus-move-sound-revf) :pointer (ptr :pointer))
+(defcfun ("mus_move_sound_closure" mus-move-sound-closure) :void (ptr :pointer))
 
-;; MUS_EXPORT bool mus_convolve_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_convolve(mus_any *ptr, mus_float_t (*input)(void *arg, int direction));
-;; MUS_EXPORT mus_any *mus_make_convolve(mus_float_t (*input)(void *arg, int direction), mus_float_t *filter, mus_long_t fftsize, mus_long_t filtersize, void *closure);
+;TODO
+;(defcfun mus_any *mus_make_src(mus_float_t (*input)(void *arg, int direction), mus_float_t srate, int width, void *closure);
 
-;; MUS_EXPORT mus_float_t *mus_spectrum(mus_float_t *rdat, mus_float_t *idat, mus_float_t *window, mus_long_t n, mus_spectrum_t type);
-;; MUS_EXPORT void mus_fft(mus_float_t *rl, mus_float_t *im, mus_long_t n, int is);
-;; MUS_EXPORT mus_float_t *mus_make_fft_window(mus_fft_window_t type, mus_long_t size, mus_float_t beta);
-;; MUS_EXPORT mus_float_t *mus_make_fft_window_with_window(mus_fft_window_t type, mus_long_t size, mus_float_t beta, mus_float_t mu, mus_float_t *window);
-;; MUS_EXPORT const char *mus_fft_window_name(mus_fft_window_t win);
-;; MUS_EXPORT const char **mus_fft_window_names(void);
+;(defcfun mus_float_t mus_src :double (mus_any *srptr, mus_float_t sr_change, mus_float_t (*input)(void *arg, int direction));
+;(defcfun bool mus_src_p :boolean (ptr :pointer);
+;(defcfun mus_float_t mus_src_20 :double (mus_any *srptr, mus_float_t (*input)(void *arg, int direction));
+;(defcfun mus_float_t mus_src_05 :double (mus_any *srptr, mus_float_t (*input)(void *arg, int direction));
 
-;; MUS_EXPORT mus_float_t *mus_autocorrelate(mus_float_t *data, mus_long_t n);
-;; MUS_EXPORT mus_float_t *mus_correlate(mus_float_t *data1, mus_float_t *data2, mus_long_t n);
-;; MUS_EXPORT mus_float_t *mus_convolution(mus_float_t *rl1, mus_float_t *rl2, mus_long_t n);
-;; MUS_EXPORT void mus_convolve_files(const char *file1, const char *file2, mus_float_t maxamp, const char *output_file);
-;; MUS_EXPORT mus_float_t *mus_cepstrum(mus_float_t *data, mus_long_t n);
+;(defcfun bool mus_convolve_p(ptr :pointer);
+;(defcfun mus_float_t mus_convolve(ptr :pointer, mus_float_t (*input)(void *arg, int direction));
+;(defcfun mus_any *mus_make_convolve(mus_float_t (*input)(void *arg, int direction), mus_float_t *filter, mus_long_t fftsize, mus_long_t filtersize, void *closure);
 
-;; MUS_EXPORT bool mus_granulate_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_granulate(mus_any *ptr, mus_float_t (*input)(void *arg, int direction));
-;; MUS_EXPORT mus_float_t mus_granulate_with_editor(mus_any *ptr, mus_float_t (*input)(void *arg, int direction), int (*edit)(void *closure));
-;; MUS_EXPORT mus_any *mus_make_granulate(mus_float_t (*input)(void *arg, int direction), 
-;; 				       mus_float_t expansion, mus_float_t length, mus_float_t scaler, 
-;; 				       mus_float_t hop, mus_float_t ramp, mus_float_t jitter, int max_size, 
-;; 				       int (*edit)(void *closure),
-;; 				       void *closure);
-;; MUS_EXPORT int mus_granulate_grain_max_length(mus_any *ptr);
-;; MUS_EXPORT void mus_granulate_set_edit_function(mus_any *ptr, int (*edit)(void *closure));
+(defcfun ("mus_spectrum" mus-spectrum) (:pointer :double) (rdat (:pointer :double)) (idat (:pointer :double)) (window (:pointer :double)) (n :ullong) (type :mus-spectrum-type))
+(defcfun ("mus_fft" mus-fft) :void (r1 (:pointer :double)) (im (:pointer :double)) (n :ullong) (is :int))
+(defcfun ("mus_make_fft_window" mus-make-fft-window) (:pointer :double) (type :mus-fft-window-type) (size :ullong) (beta :double))
+(defcfun ("mus_make_fft_window_with_window" mus-make-fft-window-with-window) (:pointer :double) (type :mus-fft-window-type) (size :ullong) (beta :double) (mu :double) (window (:pointer :double)))
+(defcfun ("mus_fft_window_name" mus-fft-window-name) :string (window :mus-fft-window-type))
+(defcfun ("mus_fft_window_names" mus-fft-window-names) (:pointer :string)())
+
+(defcfun ("mus_autocorrelate" mus-autocorrelate) (:pointer :double) (data (:pointer :double)) (n :ullong))
+(defcfun ("mus_correlate" mus-correlate) (:pointer :double) (data1 (:pointer :double)) (data2 (:pointer :double)) (n :ullong))
+(defcfun ("mus_convolution" mus-convolution) (:pointer :double) (rl1 (:pointer :double)) (rl2 (:pointer :double)) (n :ullong))
+(defcfun ("mus_convolve_files" mus-convolve-files) :void (file1 :string) (file2 :string) (maxamp :double) (output-file :string))
+(defcfun ("mus_cepstrum" mus-cepstrum)(:pointer :double) (data (:pointer :double)) (n :ullong))
+
+(defcfun bool mus_granulate_p(ptr :pointer);
+(defcfun mus_float_t mus_granulate(ptr :pointer, mus_float_t (*input)(void *arg, int direction));
+(defcfun mus_float_t mus_granulate_with_editor(ptr :pointer, mus_float_t (*input)(void *arg, int direction), int (*edit)(void *closure));
+(defcfun mus_any *mus_make_granulate(mus_float_t (*input)(void *arg, int direction), 
+				       mus_float_t expansion, mus_float_t length, mus_float_t scaler, 
+				       mus_float_t hop, mus_float_t ramp, mus_float_t jitter, int max_size, 
+				       int (*edit)(void *closure),
+				       void *closure);
+(defcfun int mus_granulate_grain_max_length(ptr :pointer);
+(defcfun void mus_granulate_set_edit_function(ptr :pointer, int (*edit)(void *closure));
 
 ;; MUS_EXPORT mus_long_t mus_set_file_buffer_size(mus_long_t size);
 ;; MUS_EXPORT mus_long_t mus_file_buffer_size(void);
