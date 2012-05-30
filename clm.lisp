@@ -115,51 +115,44 @@
 ;; #define MUS_MAX_CLM_SINC_WIDTH 65536
 ;; #define MUS_MAX_CLM_SRC 65536.0
 
-;; #ifdef __cplusplus
-;; extern "C" {
-;; #endif
+(defcfun ("mus_initialize" mus-initialize) :void ())
 
-;; MUS_EXPORT void mus_initialize(void);
+(defcfun ("mus_make_class_tag" mus-make-class-tag) :int ())
+(defcfun ("mus_radians_to_hz" mus-radians-to-hz) :double (radians :double))
+(defcfun ("mus_hz_to_radians" mus-hz-to-radians) :double (hz :double))
+(defcfun ("mus_degrees_to_radians" mus-degrees-to-radians) :double (degrees :double))
+(defcfun ("mus_radians_to_degrees" mus-radians-to-degrees) :double (radians :double))
+(defcfun ("mus_db_to_linear" mus-db-to-linear) :double (x :double))
+(defcfun ("mus_linear_to_db" mus-linear-to-db) :double (x :double))
 
-;; MUS_EXPORT int mus_make_class_tag(void);
-;; MUS_EXPORT mus_float_t mus_radians_to_hz(mus_float_t radians);
-;; MUS_EXPORT mus_float_t mus_hz_to_radians(mus_float_t hz);
-;; MUS_EXPORT mus_float_t mus_degrees_to_radians(mus_float_t degrees);
-;; MUS_EXPORT mus_float_t mus_radians_to_degrees(mus_float_t radians);
-;; MUS_EXPORT mus_float_t mus_db_to_linear(mus_float_t x);
-;; MUS_EXPORT mus_float_t mus_linear_to_db(mus_float_t x);
+(defcfun ("mus_srate" mus-srate) :double ())
+(defcfun ("mus_set_srate" mus-set-srate) :double (val :double))
+(defcfun ("mus_seconds_to_samples" mus-seconds-to-samples) :ullong (secs :double))
+(defcfun ("mus_samples_to_seconds" mus-samples-to-seconds) :double (samps :ullong))
+(defcfun ("mus_array_print_length" mus-array-print-length) :int ())
+(defcfun ("mus_set_array_print_length" mus-set-array-print-length) :int (val :int))
+(defcfun ("mus_float_equal_fudge_factor" mus-float-equal-fudge-factor) :double ())
+(defcfun ("mus_set_float_equal_fudge_factor" mus-set-float-equal-fudge-factor) :double (val :double))
 
-;; MUS_EXPORT mus_float_t mus_srate(void);
-;; MUS_EXPORT mus_float_t mus_set_srate(mus_float_t val);
-;; MUS_EXPORT mus_long_t mus_seconds_to_samples(mus_float_t secs);
-;; MUS_EXPORT mus_float_t mus_samples_to_seconds(mus_long_t samps);
-;; MUS_EXPORT int mus_array_print_length(void);
-;; MUS_EXPORT int mus_set_array_print_length(int val);
-;; MUS_EXPORT mus_float_t mus_float_equal_fudge_factor(void);
-;; MUS_EXPORT mus_float_t mus_set_float_equal_fudge_factor(mus_float_t val);
+(defcfun ("mus_ring_modulate" mus-ring-modulate) :double (s1 :double) (s2 :double))
+(defcfun ("mus_amplitude_modulate" mus-amplitude-modulate) :double (s1 :double) (s2 :double) (s3 :double))
+(defcfun ("mus_contrast_enhancement" mus-contrast-enhancement) :double (sig :double) (index :double))
+(defcfun ("mus_dot_product" mus-dot-product) :double (data1 (:pointer :double)) (data2 (:pointer :double)) (size :ullong))
 
-;; MUS_EXPORT mus_float_t mus_ring_modulate(mus_float_t s1, mus_float_t s2);
-;; MUS_EXPORT mus_float_t mus_amplitude_modulate(mus_float_t s1, mus_float_t s2, mus_float_t s3);
-;; MUS_EXPORT mus_float_t mus_contrast_enhancement(mus_float_t sig, mus_float_t index);
-;; MUS_EXPORT mus_float_t mus_dot_product(mus_float_t *data1, mus_float_t *data2, mus_long_t size);
-;; #if HAVE_COMPLEX_TRIG
-;; MUS_EXPORT complex double mus_edot_product(complex double freq, complex double *data, mus_long_t size);
-;; #endif
+(defcfun ("mus_clear_array" mus-clear-array) :void (arr (:pointer :double)) (size :ullong))
+(defcfun ("mus_arrays_are_equal" mus-arrays-are-equal) :boolean (arr1 (:pointer :double)) (arr2 (:pointer :double)) (fudge :double) (leng :ullong))
+(defcfun ("mus_polynomial" mus-polynomial) :double (coeffs (:pointer :double)) (x :double) (ncoeffs :int))
+(defcfun ("mus_multiply_arrays" mus-multiply-arrays) :void (data (:pointer :double)) (window (:pointer :double)) (len :ullong))
+(defcfun ("mus_rectangular_to_polar" mus-rectangular-to-polar) :void (r1 (:pointer :double)) (im (:pointer :double)) (size :ullong))
+(defcfun ("mus_rectangular_to_magnitudes" mus-rectangular-to-magnitudes) :void (rl (:pointer :double)) (im (:pointer :double)) (size :ullong))
+(defcfun ("mus_polar_to_rectangular" mus-polar-to-rectangular) :void (rl (:pointer :double)) (im (:pointer :double)) (size :ullong))
+(defcfun ("mus_array_interp" mus-array-interp) :double (wave (:pointer :double)) (phase :double) (size :ullong))
+(defcfun ("mus_bessi0" mus-bessi0) :double (x :double))
+(defcfun ("mus_interpolate" mus-interpolate) :double (type mus_interp) (x :double) (table (:pointer :double)) (table-size :ullong) (y :double))
+(defcfun ("mus_interp_type_p" mus-interp-type-p) :boolean (val :int))
+(defcfun ("mus_fft_window_p" mus-fft-window-p) :boolean (val :int))
 
-;; MUS_EXPORT void mus_clear_array(mus_float_t *arr, mus_long_t size);
-;; MUS_EXPORT bool mus_arrays_are_equal(mus_float_t *arr1, mus_float_t *arr2, mus_float_t fudge, mus_long_t len);
-;; MUS_EXPORT mus_float_t mus_polynomial(mus_float_t *coeffs, mus_float_t x, int ncoeffs);
-;; MUS_EXPORT void mus_multiply_arrays(mus_float_t *data, mus_float_t *window, mus_long_t len);
-;; MUS_EXPORT void mus_rectangular_to_polar(mus_float_t *rl, mus_float_t *im, mus_long_t size);
-;; MUS_EXPORT void mus_rectangular_to_magnitudes(mus_float_t *rl, mus_float_t *im, mus_long_t size);
-;; MUS_EXPORT void mus_polar_to_rectangular(mus_float_t *rl, mus_float_t *im, mus_long_t size);
-;; MUS_EXPORT mus_float_t mus_array_interp(mus_float_t *wave, mus_float_t phase, mus_long_t size);
-;; MUS_EXPORT double mus_bessi0(mus_float_t x);
-;; MUS_EXPORT mus_float_t mus_interpolate(mus_interp_t type, mus_float_t x, mus_float_t *table, mus_long_t table_size, mus_float_t y);
-;; MUS_EXPORT bool mus_interp_type_p(int val);
-;; MUS_EXPORT bool mus_fft_window_p(int val);
-
-;; MUS_EXPORT int mus_data_format_zero(int format);
+(defcfun ("mus_data_format_zero" mus-data-format-zero) :int (format :int))
 
 
 ;; /* -------- generic functions -------- */
@@ -555,62 +548,51 @@
 (defcfun ("mus_convolve_files" mus-convolve-files) :void (file1 :string) (file2 :string) (maxamp :double) (output-file :string))
 (defcfun ("mus_cepstrum" mus-cepstrum)(:pointer :double) (data (:pointer :double)) (n :ullong))
 
-(defcfun bool mus_granulate_p(ptr :pointer);
-(defcfun mus_float_t mus_granulate(ptr :pointer, mus_float_t (*input)(void *arg, int direction));
-(defcfun mus_float_t mus_granulate_with_editor(ptr :pointer, mus_float_t (*input)(void *arg, int direction), int (*edit)(void *closure));
-(defcfun mus_any *mus_make_granulate(mus_float_t (*input)(void *arg, int direction), 
-				       mus_float_t expansion, mus_float_t length, mus_float_t scaler, 
-				       mus_float_t hop, mus_float_t ramp, mus_float_t jitter, int max_size, 
-				       int (*edit)(void *closure),
-				       void *closure);
-(defcfun int mus_granulate_grain_max_length(ptr :pointer);
-(defcfun void mus_granulate_set_edit_function(ptr :pointer, int (*edit)(void *closure));
+(defcfun ("mus_granulate_p" mus-granulate-p) :boolean (ptr :pointer))
+;(defcfun ("mus_granulate" mus-granulate) :double (ptr :pointer) , mus_float_t (*input)(void *arg, int direction));
+;(defcfun mus_float_t mus_granulate_with_editor :double (ptr :pointer, mus_float_t (*input)(void *arg, int direction), int (*edit)(void *closure));
+;(defcfun mus_any *mus_make_granulate(mus_float_t (*input)(void *arg, int direction), 
+;				       mus_float_t expansion, mus_float_t length, mus_float_t scaler, 
+;				       mus_float_t hop, mus_float_t ramp, mus_float_t jitter, int max_size, 
+;				       int (*edit)(void *closure),
+;				       void *closure);
+(defcfun ("mus_granulate_grain_max_length" mus-granulate-grain-max-length) :int (ptr :pointer))
+;(defcfun ("mus_granulate_set_edit_function" mus-granulate-set-edit-function) :void (ptr :pointer) ,int (*edit)(void *closure));
 
-;; MUS_EXPORT mus_long_t mus_set_file_buffer_size(mus_long_t size);
-;; MUS_EXPORT mus_long_t mus_file_buffer_size(void);
+(defcfun ("mus_set_file_buffer_size" mus-set-file-buffer-size) :ullong (size :ullong))
+(defcfun ("mus_file_buffer_size" mus-file-buffer-size) :ullong ())
 
-;; MUS_EXPORT void mus_mix(const char *outfile, const char *infile, mus_long_t out_start, mus_long_t out_samps, mus_long_t in_start, mus_any *mx, mus_any ***envs);
-;; MUS_EXPORT void mus_mix_with_reader_and_writer(mus_any *outf, mus_any *inf, mus_long_t out_start, mus_long_t out_frames, mus_long_t in_start, mus_any *umx, mus_any ***envs);
-;; MUS_EXPORT mus_float_t mus_apply(mus_any *gen, mus_float_t f1, mus_float_t f2);
+(defcfun ("mus_mix" mus-mix) :void (outfile :string) (infile :string) (out-start :ullong) (out-samps :ullong) (in-start :ullong) (mx :pointer) (envs (:pointer (:pointer :pointer))))
+(defcfun ("mus_mix_with_reader_and_writer" mus-mix-with-reader-and-writer) :void (outf :pointer) (inf :pointer) (out-start :ullong) (out-frames :ullong) (in-start :ullong) (umx :pointer) (envs (:pointer (:pointer :ponter))))
+(defcfun ("mus_apply" mus-apply) :double (gen :pointer) (f1 :double) (f2 :double))
 
-;; MUS_EXPORT bool mus_phase_vocoder_p(mus_any *ptr);
-;; MUS_EXPORT mus_any *mus_make_phase_vocoder(mus_float_t (*input)(void *arg, int direction), 
-;; 					   int fftsize, int overlap, int interp,
-;; 					   mus_float_t pitch,
-;; 					   bool (*analyze)(void *arg, mus_float_t (*input)(void *arg1, int direction)),
-;; 					   int (*edit)(void *arg), /* return value is ignored (int return type is intended to be consistent with granulate) */
-;; 					   mus_float_t (*synthesize)(void *arg), 
-;; 					   void *closure);
-;; MUS_EXPORT mus_float_t mus_phase_vocoder(mus_any *ptr, mus_float_t (*input)(void *arg, int direction));
-;; MUS_EXPORT mus_float_t mus_phase_vocoder_with_editors(mus_any *ptr, 
-;; 						mus_float_t (*input)(void *arg, int direction),
-;; 						bool (*analyze)(void *arg, mus_float_t (*input)(void *arg1, int direction)),
-;; 						int (*edit)(void *arg), 
-;; 						mus_float_t (*synthesize)(void *arg));
+(defcfun ("mus_phase_vocoder_p" mus-phase-vocoder-p) :boolean (ptr :pointer))
+;(defcfun mus_any *mus_make_phase_vocoder(mus_float_t (*input)(void *arg, int direction), 
+;					   int fftsize, int overlap, int interp,
+;					   mus_float_t pitch,
+;					   bool (*analyze)(void *arg, mus_float_t (*input)(void *arg1, int direction)),
+;					   int (*edit)(void *arg), /* return value is ignored (int return type is intended to be consistent with granulate) */
+;					   mus_float_t (*synthesize)(void *arg), 
+;					   void *closure);
+;(defcfun mus_float_t mus_phase_vocoder(mus_any *ptr, mus_float_t (*input)(void *arg, int direction));
+;(defcfun mus_float_t mus_phase_vocoder_with_editors(mus_any *ptr, 
+;						mus_float_t (*input)(void *arg, int direction),
+;						bool (*analyze)(void *arg, mus_float_t (*input)(void *arg1, int direction)),
+;						int (*edit)(void *arg), 
+;						mus_float_t (*synthesize)(void *arg));
 
-;; MUS_EXPORT mus_float_t *mus_phase_vocoder_amp_increments(mus_any *ptr);
-;; MUS_EXPORT mus_float_t *mus_phase_vocoder_amps(mus_any *ptr);
-;; MUS_EXPORT mus_float_t *mus_phase_vocoder_freqs(mus_any *ptr);
-;; MUS_EXPORT mus_float_t *mus_phase_vocoder_phases(mus_any *ptr);
-;; MUS_EXPORT mus_float_t *mus_phase_vocoder_phase_increments(mus_any *ptr);
+(defcfun ("mus_phase_vocoder_amp_increments" mus-phase-vocoder-amp-increments) (:pointer :double) (ptr :pointer))
+(defcfun ("mus_phase_vocoder_amps" mus-phase-vocoder-amps) (:pointer :double) (ptr :pointer))
+(defcfun ("mus_phase_vocoder_freqs" mus-phase-vocoder-freqs) (:pointer :double) (ptr :pointer))
+(defcfun ("mus_phase_vocoder_phases" mus-phase-vocoder-phases) (:pointer :double) (ptr :pointer))
+(defcfun ("mus_phase_vocoder_phase_increments" mus-phase-vocoder-phase-increments) (:pointer :double) (ptr :pointer))
 
+(defcfun ("mus_make_ssb_am" mus-make-ssb-am) :pointer (freq :double) (order :int))
+(defcfun ("mus_ssb_am_p" mus-ssb-am-p) :boolean (ptr :pointer))
+(defcfun ("mus_ssb_am_unmodulated" mus-ssb-am-unmodulated) :double (ptr :pointer) (insig :double))
+(defcfun ("mus_ssb_am" mus-ssb-am) :double (ptr :pointer) (insig :double) (fm :double))
 
-;; MUS_EXPORT mus_any *mus_make_ssb_am(mus_float_t freq, int order);
-;; MUS_EXPORT bool mus_ssb_am_p(mus_any *ptr);
-;; MUS_EXPORT mus_float_t mus_ssb_am_unmodulated(mus_any *ptr, mus_float_t insig);
-;; MUS_EXPORT mus_float_t mus_ssb_am(mus_any *ptr, mus_float_t insig, mus_float_t fm);
+(defcfun ("mus_clear_sinc_tables" mus-clear-sinc-tables) :void ())
+(defcfun ("mus_environ" mus-environ) :pointer (gen :pointer))
+(defcfun ("mus_set_environ" mus-set-environ) :pointer (gen :pointer) (e :pointer))
 
-;; MUS_EXPORT void mus_clear_sinc_tables(void);
-;; MUS_EXPORT void *mus_environ(mus_any *gen);
-;; MUS_EXPORT void *mus_set_environ(mus_any *gen, void *e);
-
-
-;; /* used only in run.lisp */
-;; MUS_EXPORT mus_any *mus_make_frame_with_data(int chans, mus_float_t *data);
-;; MUS_EXPORT mus_any *mus_make_mixer_with_data(int chans, mus_float_t *data);
-
-;; #ifdef __cplusplus
-;; }
-;; #endif
-
-;; #endif
