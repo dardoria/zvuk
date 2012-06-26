@@ -82,7 +82,7 @@
 ;; } mus_any_class;
 
 
-(defcenum mus-interp
+(defcenum :mus-interp
     :none :linear :sinusoidal :all-pass 
     :lagrange :bezier :hermite :num-interps)
 
@@ -115,9 +115,9 @@
 ;; #define MUS_MAX_CLM_SINC_WIDTH 65536
 ;; #define MUS_MAX_CLM_SRC 65536.0
 
-(defcfun ("mus_initialize" mus-initialize) :void ())
+(defcfun ("mus_initialize" mus-initialize) :void)
 
-(defcfun ("mus_make_class_tag" mus-make-class-tag) :int ())
+(defcfun ("mus_make_class_tag" mus-make-class-tag) :int)
 (defcfun ("mus_radians_to_hz" mus-radians-to-hz) :double (radians :double))
 (defcfun ("mus_hz_to_radians" mus-hz-to-radians) :double (hz :double))
 (defcfun ("mus_degrees_to_radians" mus-degrees-to-radians) :double (degrees :double))
@@ -125,13 +125,13 @@
 (defcfun ("mus_db_to_linear" mus-db-to-linear) :double (x :double))
 (defcfun ("mus_linear_to_db" mus-linear-to-db) :double (x :double))
 
-(defcfun ("mus_srate" mus-srate) :double ())
+(defcfun ("mus_srate" mus-srate) :double)
 (defcfun ("mus_set_srate" mus-set-srate) :double (val :double))
 (defcfun ("mus_seconds_to_samples" mus-seconds-to-samples) :ullong (secs :double))
 (defcfun ("mus_samples_to_seconds" mus-samples-to-seconds) :double (samps :ullong))
-(defcfun ("mus_array_print_length" mus-array-print-length) :int ())
+(defcfun ("mus_array_print_length" mus-array-print-length) :int)
 (defcfun ("mus_set_array_print_length" mus-set-array-print-length) :int (val :int))
-(defcfun ("mus_float_equal_fudge_factor" mus-float-equal-fudge-factor) :double ())
+(defcfun ("mus_float_equal_fudge_factor" mus-float-equal-fudge-factor) :double)
 (defcfun ("mus_set_float_equal_fudge_factor" mus-set-float-equal-fudge-factor) :double (val :double))
 
 (defcfun ("mus_ring_modulate" mus-ring-modulate) :double (s1 :double) (s2 :double))
@@ -148,7 +148,7 @@
 (defcfun ("mus_polar_to_rectangular" mus-polar-to-rectangular) :void (rl (:pointer :double)) (im (:pointer :double)) (size :ullong))
 (defcfun ("mus_array_interp" mus-array-interp) :double (wave (:pointer :double)) (phase :double) (size :ullong))
 (defcfun ("mus_bessi0" mus-bessi0) :double (x :double))
-(defcfun ("mus_interpolate" mus-interpolate) :double (type mus_interp) (x :double) (table (:pointer :double)) (table-size :ullong) (y :double))
+(defcfun ("mus_interpolate" mus-interpolate) :double (type :mus-interp) (x :double) (table (:pointer :double)) (table-size :ullong) (y :double))
 (defcfun ("mus_interp_type_p" mus-interp-type-p) :boolean (val :int))
 (defcfun ("mus_fft_window_p" mus-fft-window-p) :boolean (val :int))
 
@@ -236,7 +236,7 @@
 (defcfun ("mus_delay_unmodulated" mus-delay-unmodulated) :double (ptr :pointer) (input :double))
 (defcfun ("mus_tap" mus-tap) :double (gen :pointer) (loc :double))
 (defcfun ("mus_tap_unmodulated" mus-tap-unmodulated) :double (gen :pointer))
-(defcfun ("mus_make_delay" mus-make-delay) :pointer (size :int) (line (:pointer :double)) (line-size :int) (type mus-interp))
+(defcfun ("mus_make_delay" mus-make-delay) :pointer (size :int) (line (:pointer :double)) (line-size :int) (type :mus-interp))
 (defcfun ("mus_delay_p" mus-delay-p) :boolean (ptr :pointer))
 (defcfun ("mus_delay_line_p" mus-delay-line-p) :boolean (gen :pointer))
 (defcfun ("mus_delay_tick" mus-delay-tick) :double (ptr :pointer) (input :double))
@@ -245,19 +245,19 @@
 
 (defcfun ("mus_comb" mus-comb) :double (gen :pointer) (input :double) (pm :double))
 (defcfun ("mus_comb_unmodulated" mus-comb-unmodulated) :double (gen :pointer) (input :double))
-(defcfun ("mus_make_comb" mus-make-comb) :pointer (scaler :double) (size :int) (line (:pointer :double)) (line-size :int) (type mus-interp))
+(defcfun ("mus_make_comb" mus-make-comb) :pointer (scaler :double) (size :int) (line (:pointer :double)) (line-size :int) (type :mus-interp))
 (defcfun ("mus_comb_p" mus-comb-p) :boolean (ptr :pointer))
 (defcfun ("mus_comb_unmodulated_noz" mus-comb-unmodulated-noz) :double (ptr :pointer) (input :double))
 
 (defcfun ("mus_notch" mus-notch) :double (gen :pointer) (input :double) (pm :double))
 (defcfun ("mus_notch_unmodulated" mus-notch-unmodulated) :double (gen :pointer) (input :double))
-(defcfun ("mus_make_notch" mus-make-notch) :pointer (scaler :double) (size :int) (line :pointer :double) (line-size :int) (type mus-interp))
+(defcfun ("mus_make_notch" mus-make-notch) :pointer (scaler :double) (size :int) (line :pointer :double) (line-size :int) (type :mus-interp))
 (defcfun ("mus_notch_p" mus-notch-p) :boolean (ptr :pointer))
 (defcfun ("mus_notch_unmodulated_noz" mus-notch-unmodulated-noze) :double (ptr :pointer) (input :double))
 
 (defcfun ("mus_all_pass" mus-all-pass) :double (gen :pointer) (input :double) (pm :double))
 (defcfun ("mus_all_pass_unmodulated" mus-all-pass-unmodulated) :double (gen :pointer) (input :double))
-(defcfun ("mus_make_all_pass" mus-make-all-pass) :pointer (backward :double) (forward :double) (size :int) (line (:pointer :double)) (line-size :int) (type mus-interp))
+(defcfun ("mus_make_all_pass" mus-make-all-pass) :pointer (backward :double) (forward :double) (size :int) (line (:pointer :double)) (line-size :int) (type :mus-interp))
 (defcfun ("mus_all_pass_p" mus-all-pass-p) :boolean (ptr :pointer))
 (defcfun ("mus_all_pass_unmodulated_noz" mus-all-pass-unmodulated-noz) :double (ptr :pointer) (input :double))
 
@@ -267,7 +267,7 @@
 
 (defcfun ("mus_table_lookup" mus-table-lookup) :double (gen :pointer) (fm :double))
 (defcfun ("mus_table_lookup_unmodulated" mus-table-lookup-unmodulated) :double (gen :pointer))
-(defcfun ("mus_make_table_lookup" mus-make-table-lookup) :pointer (freq :double) (phase :double) (wave (:pointer :double)) (wav-size :ullong) (type mus-interp))
+(defcfun ("mus_make_table_lookup" mus-make-table-lookup) :pointer (freq :double) (phase :double) (wave (:pointer :double)) (wav-size :ullong) (type :mus-interp))
 (defcfun ("mus_table_lookup_p" mus-table-lookup-p) :boolean (ptr :pointer))
 (defcfun ("mus_partials_to_wave" mus-partials-to-wave) (:pointer :double) (partial-data (:pointer :double)) (partials :int) (table (:pointer :double)) (table-size :ullong) (normalize :boolean))
 (defcfun ("mus_phase_partials_to_wave" mus-phase-partials-to-wave) (:pointer :double) (partial-data (:pointer :double)) (partials :int) (table (:pointer :double)) (table-size :ullong) (normalize :boolean))
@@ -303,7 +303,7 @@
 
 (defcfun ("mus_rand_interp" mus-rand-interp) :double (gen :pointer) (fm :double))
 (defcfun ("mus_make_rand_interp" mus-make-rand-interp) :pointer (freq :double) (base :double))
-(defcfun ("mus_rand_interp_p" mus-rand-interp-p) :boolean (ptr :pointer);
+(defcfun ("mus_rand_interp_p" mus-rand-interp-p) :boolean (ptr :pointer))
 (defcfun ("mus_make_rand_interp_with_distribution" mus-make-rand-interp-with-distribution) :pointer (freq :double) (base :double) (distribution (:pointer :double)) (distribution-size :int))
 (defcfun ("mus_rand_interp_unmodulated" mus-rand-interp-unmodulated) :double (ptr :pointer))
 (defcfun ("mus_rand_unmodulated" mus-rand-unmodulated) :double (ptr :pointer))
@@ -339,107 +339,107 @@
 (defcfun ("mus_formant_with_frequency" mus-formant-with-frequency) :double (ptr :pointer) (input :double) (freq-in-radians :double))
 (defcfun ("mus_formant_bank" mus-formant-bank) :double (amps (:pointer :double)) (formants (:pointer :pointer)) (inval :double) (size :int))
 
-(defcenum ("mus_firmant" mus-firmant) :double (ptr :pointer) (input :double))
-(defcenum ("mus_make_firmant" mus-make-firmant) :pointer (frequence :double) (radius :double))
-(defcenum ("mus_firmant_p" mus-firmant-p) :boolean (ptr :pointer))
-(defcenum ("mus_firmant_with_frequency" mus-firmant-with-frequency) :double (ptr :pointer) (input :double) (freq-in-radians :double))
+(defcfun ("mus_firmant" mus-firmant) :double (ptr :pointer) (input :double))
+(defcfun ("mus_make_firmant" mus-make-firmant) :pointer (frequence :double) (radius :double))
+(defcfun ("mus_firmant_p" mus-firmant-p) :boolean (ptr :pointer))
+(defcfun ("mus_firmant_with_frequency" mus-firmant-with-frequency) :double (ptr :pointer) (input :double) (freq-in-radians :double))
 
-(defcenum ("mus_filter" mus-filter) :double (ptr :pointer) (input :double))
-(defcenum ("mus_make_filter" mus-make-filter) :pointer (order :int) (xcoeffs (:pointer :double)) (ycoeffs (:pointer :double)) (state (:pointer :double)))
-(defcenum ("mus_filter_p" mus-filter-p) :boolean (ptr :pointer))
+(defcfun ("mus_filter" mus-filter) :double (ptr :pointer) (input :double))
+(defcfun ("mus_make_filter" mus-make-filter) :pointer (order :int) (xcoeffs (:pointer :double)) (ycoeffs (:pointer :double)) (state (:pointer :double)))
+(defcfun ("mus_filter_p" mus-filter-p) :boolean (ptr :pointer))
 
-(defcenum ("mus_fir_filter" mus-fir-filter) :double (ptr :pointer) (input :double))
-(defcenum ("mus_make_fir_filter" mus-make-fir-filter) :pointer (order :int) (xcoeffs (:pointer :double)) (state (:pointer :double)))
-(defcenum ("mus_fir_filter_p" mus-fir-filter-p) :boolean (ptr :pointer))
+(defcfun ("mus_fir_filter" mus-fir-filter) :double (ptr :pointer) (input :double))
+(defcfun ("mus_make_fir_filter" mus-make-fir-filter) :pointer (order :int) (xcoeffs (:pointer :double)) (state (:pointer :double)))
+(defcfun ("mus_fir_filter_p" mus-fir-filter-p) :boolean (ptr :pointer))
 
-(defcenum ("mus_iir_filter" mus-iir-filter) :double (ptr :pointer), (input :double));
-(defcenum ("mus_make_iir_filter" mus-make-iir-filter) :pointer (order :int) (ycoeffs (:pointer :double)) (state (:pointer :double)))
-(defcenum ("mus_iir_filter_p" mus-iir-filter-p) :boolean (ptr :pointer)
-(defcenum ("mus_make_fir_coeffs" mus-make-fir-coeffs) (:pointer :double) (order :int) (env (:pointer :double)) (aa (:pointer :double)))
+(defcfun ("mus_iir_filter" mus-iir-filter) :double (ptr :pointer) (input :double))
+(defcfun ("mus_make_iir_filter" mus-make-iir-filter) :pointer (order :int) (ycoeffs (:pointer :double)) (state (:pointer :double)))
+(defcfun ("mus_iir_filter_p" mus-iir-filter-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_fir_coeffs" mus-make-fir-coeffs) (:pointer :double) (order :int) (env (:pointer :double)) (aa (:pointer :double)))
 
-(defcenum ("mus_filter_set_xcoeffs" mus-filter-set-xcoeffs) (:pointer :double) (ptr :pointer) (new-data (:pointer :double)))
-(defcenum ("mus_filter_set_ycoeffs" mus-filter-set-ycoeffs) (:pointer :double) (ptr :pointer) (new-data (:pointer :double)))
-(defcenum ("mus_filter_set_order" mus-filter-set-order) :int (ptr :pointer) (order :int))
+(defcfun ("mus_filter_set_xcoeffs" mus-filter-set-xcoeffs) (:pointer :double) (ptr :pointer) (new-data (:pointer :double)))
+(defcfun ("mus_filter_set_ycoeffs" mus-filter-set-ycoeffs) (:pointer :double) (ptr :pointer) (new-data (:pointer :double)))
+(defcfun ("mus_filter_set_order" mus-filter-set-order) :int (ptr :pointer) (order :int))
 
-(defcenum ("mus_filtered_comb" mus-filtered-comb) :double (ptr :pointer) (input :double) (pm :double))
-(defcenum ("mus_filtered_comb_unmodulated" mus-filtered-comb-unmodulated) :double (ptr :pointer) (input :double))
-(defcenum ("mus_filtered_comb_p" mus-filtered-comb-p) :boolean (ptr :pointer))
-(defcenum ("mus_make_filtered_comb" mus-make-filtered-comb) :pointer (scaler :double) (size :int) (line (:pointer :double)) (line-size :int) (type mus-interp) (filter :pointer #|mus_any|#))
+(defcfun ("mus_filtered_comb" mus-filtered-comb) :double (ptr :pointer) (input :double) (pm :double))
+(defcfun ("mus_filtered_comb_unmodulated" mus-filtered-comb-unmodulated) :double (ptr :pointer) (input :double))
+(defcfun ("mus_filtered_comb_p" mus-filtered-comb-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_filtered_comb" mus-make-filtered-comb) :pointer (scaler :double) (size :int) (line (:pointer :double)) (line-size :int) (type :mus-interp) (filter :pointer #|mus_any|#))
 
-(defcenum ("mus_wave_train" mus-wave-train) :double (gen :pointer) (fm :double))
-(defcenum ("mus_wave_train_unmodulated" mus-wave-train-unmodulated) :double (gen :pointer))
-(defcenum ("mus_make_wave_train" mus-make-wave-train) :pointer (freq :double) (phase :double) (wave (:pointer :double)) (wsize :ullong) (type mus-interp))
-(defcenum ("mus_wave_train_p" mus-wave-train-p) :boolean (gen :pointer))
+(defcfun ("mus_wave_train" mus-wave-train) :double (gen :pointer) (fm :double))
+(defcfun ("mus_wave_train_unmodulated" mus-wave-train-unmodulated) :double (gen :pointer))
+(defcfun ("mus_make_wave_train" mus-make-wave-train) :pointer (freq :double) (phase :double) (wave (:pointer :double)) (wsize :ullong) (type :mus-interp))
+(defcfun ("mus_wave_train_p" mus-wave-train-p) :boolean (gen :pointer))
 
-(defcenum ("mus_partials_to_polynomial" mus-partials-to-polynomial) (:pointer :double) (npartials :int) (partials (:pointer :double)) (kind :mus-polynomial))
-(defcenum ("mus_normalize_partials" mus-normalize-partials) (:pointer :double) (num-partials :int) (partials (:pointder :double)))
+(defcfun ("mus_partials_to_polynomial" mus-partials-to-polynomial) (:pointer :double) (npartials :int) (partials (:pointer :double)) (kind :mus-polynomial))
+(defcfun ("mus_normalize_partials" mus-normalize-partials) (:pointer :double) (num-partials :int) (partials (:pointer :double)))
 
-(defcenum ("mus_make_polyshape" mus-make-polyshape) :pointer (frequency :double) (phase :double) (coeffs (:pointer :double)) (size :int) (cheby-choice :int))
-(defcenum ("mus_polyshape" mus-polyshape) :double (ptr :pointer) (index :double) (fm :double))
+(defcfun ("mus_make_polyshape" mus-make-polyshape) :pointer (frequency :double) (phase :double) (coeffs (:pointer :double)) (size :int) (cheby-choice :int))
+(defcfun ("mus_polyshape" mus-polyshape) :double (ptr :pointer) (index :double) (fm :double))
 ;;TODO
 ;#define mus_polyshape_fm(Obj, Fm) mus_polyshape(Obj, 1.0, Fm)
-(defcenum ("mus_polyshape_unmodulated" mus-polyshape-unmodulated) :double (ptr :pointer) (index :double))
+(defcfun ("mus_polyshape_unmodulated" mus-polyshape-unmodulated) :double (ptr :pointer) (index :double))
 ;;TODO
 ;#define mus_polyshape_no_input(Obj) mus_polyshape(Obj, 1.0, 0.0)
-(defcenum ("mus_polyshape_p" mus-polyshape-p) :boolean (ptr :pointer))
+(defcfun ("mus_polyshape_p" mus-polyshape-p) :boolean (ptr :pointer))
 
-(defcenum ("mus_make_polywave" mus-make-polywave) :pointer (frequency :double) (coeffs (:pointer :double)) (n :int) (cheby-choice :int))
-(defcenum ("mus_polywave_p" mus-polywave-p) :boolean (ptr :pointer))
-(defcenum ("mus_polywave_unmodulated" mus-polywave-unmodulated) :double (ptr :pointer))
-(defcenum ("mus_polywave" mus-polywave) :double (ptr :pointer) (fm :double))
-(defcenum ("mus_chebyshev_t_sum" mus-chebyshev-t-sum) :double (x :double) (n :int) (tn (:pointer :double)))
-(defcenum ("mus_chebyshev_u_sum" mus-chebyshev-u-sum) :double (x :double) (n :int) (un (:pointer :double)))
-(defcenum ("mus_chebyshev_tu_sum" mus-chebyshev-tu-sum) :double(x :double) (n:int)  (tn (:pointer :double)) (un (:pointer :double)))
+(defcfun ("mus_make_polywave" mus-make-polywave) :pointer (frequency :double) (coeffs (:pointer :double)) (n :int) (cheby-choice :int))
+(defcfun ("mus_polywave_p" mus-polywave-p) :boolean (ptr :pointer))
+(defcfun ("mus_polywave_unmodulated" mus-polywave-unmodulated) :double (ptr :pointer))
+(defcfun ("mus_polywave" mus-polywave) :double (ptr :pointer) (fm :double))
+(defcfun ("mus_chebyshev_t_sum" mus-chebyshev-t-sum) :double (x :double) (n :int) (tn (:pointer :double)))
+(defcfun ("mus_chebyshev_u_sum" mus-chebyshev-u-sum) :double (x :double) (n :int) (un (:pointer :double)))
+(defcfun ("mus_chebyshev_tu_sum" mus-chebyshev-tu-sum) :double(x :double) (n :int)  (tn (:pointer :double)) (un (:pointer :double)))
 ;;TODO
 ;#define mus_polywave_type(Obj) mus_channel(Obj)
 
-(defcenum ("mus_env" mus-env) :double (ptr :pointer))
-(defcenum ("mus_make_env" mus-make-env) :pointer (brkpts (:pointer :double)) (npts :int) (scaler :double) (offset :double) (base :double) (duration :double) (end :ullong) (odata (:pointer :double)))
-(defcenum ("mus_env_p" mus-env-p) :boolean (ptr :pointer))
-(defcenum ("mus_env_interp" mus-env-interp) :double (x :couble) (env :pointer #|mus_any|#))
-(defcenum ("mus_env_passes" mus-env-passes) (:pointer :ullong) (gen :pointer)) ;for Snd
-(defcenum ("mus_env_rates" mus-env-rates) (:pointer :double) (gen :pointer));        /* for Snd */
-(defcenum ("mus_env_offset" mus-env-offset) :double (gen :pointer));        /* for Snd */
-(defcenum ("mus_env_scaler" mus-env-scaler) :double (gen :pointer));        /* for Snd */
-(defcenum ("mus_env_initial_power" mus-env-initial-power) :double (gen :pointer)); /* for Snd */
-(defcenum ("mus_env_breakpoints" mus-env-breakpoints) :int (gen :pointer));      /* for Snd */
-(defcenum ("mus_env_any" mus-env-any) :double (e :pointer) (connect-points (:pointer :double)) (val :double))
+(defcfun ("mus_env" mus-env) :double (ptr :pointer))
+(defcfun ("mus_make_env" mus-make-env) :pointer (brkpts (:pointer :double)) (npts :int) (scaler :double) (offset :double) (base :double) (duration :double) (end :ullong) (odata (:pointer :double)))
+(defcfun ("mus_env_p" mus-env-p) :boolean (ptr :pointer))
+(defcfun ("mus_env_interp" mus-env-interp) :double (x :double) (env :pointer #|mus_any|#))
+(defcfun ("mus_env_passes" mus-env-passes) (:pointer :ullong) (gen :pointer)) ;for Snd
+(defcfun ("mus_env_rates" mus-env-rates) (:pointer :double) (gen :pointer));        /* for Snd */
+(defcfun ("mus_env_offset" mus-env-offset) :double (gen :pointer));        /* for Snd */
+(defcfun ("mus_env_scaler" mus-env-scaler) :double (gen :pointer));        /* for Snd */
+(defcfun ("mus_env_initial_power" mus-env-initial-power) :double (gen :pointer)); /* for Snd */
+(defcfun ("mus_env_breakpoints" mus-env-breakpoints) :int (gen :pointer));      /* for Snd */
+(defcfun ("mus_env_any" mus-env-any) :double (e :pointer) (connect-points (:pointer :double)) (val :double))
 ;TODO
 ;#define mus_make_env_with_length(Brkpts, Pts, Scaler, Offset, Base, Length) mus_make_env(Brkpts, Pts, Scaler, Offset, Base, 0.0, (Length) - 1, NULL)
-(defcenum ("mus_env_linear" mus-env-linear) :double (ptr :pointer))
-(defcenum ("mus_env_exponential" mus-env-exponential) :double (ptr :pointer))
-(defcenum ("mus_env_step" mus-env-step) :double (ptr :pointer))
-(defcenum ("mus_env_type" mus-env-type) :mus-env (ptr :pointer))
+(defcfun ("mus_env_linear" mus-env-linear) :double (ptr :pointer))
+(defcfun ("mus_env_exponential" mus-env-exponential) :double (ptr :pointer))
+(defcfun ("mus_env_step" mus-env-step) :double (ptr :pointer))
+(defcfun ("mus_env_type" mus-env-type) :mus-env (ptr :pointer))
 
-(defcenum ("mus_frame_p" mus-frame-p) :boolean (ptr :pointer))
-(defcenum ("mus_make_empty_frame" mus-make-empty-frame) :pointer (chans :int))
+(defcfun ("mus_frame_p" mus-frame-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_empty_frame" mus-make-empty-frame) :pointer (chans :int))
 ;TODO
-;(defcenum mus_any *mus_make_frame :pointer (int chans, ...);
-(defcenum ("mus_frame_add" mus-frame-add) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
-(defcenum ("mus_frame_multiply" mus-frame-multiply) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
-(defcenum ("mus_frame_scale" mus-frame-scale) :pointer (uf1 :pointer) (sc1 :pointer) (ures :pointer))
-(defcenum ("mus_frame_offset" mus-frame-offset) :pointer (uf1 :pointer) (offset :double) (ures :pointer))
-(defcenum ("mus_frame_ref" mus-frame-ref) :double (f :pointer) (chan :int))
-(defcenum ("mus_frame_set" mus-frame-set) :double (f :pointer) (chan :int) (val :double))
-(defcenum ("mus_frame_copy" mus-frame-copy) :pointer (uf :pointer))
-(defcenum ("mus_frame_fill" mus-frame-fill) :double (uf :pointer) (val :double))
+;(defcfun mus_any *mus_make_frame :pointer (int chans, ...);
+(defcfun ("mus_frame_add" mus-frame-add) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcfun ("mus_frame_multiply" mus-frame-multiply) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcfun ("mus_frame_scale" mus-frame-scale) :pointer (uf1 :pointer) (sc1 :pointer) (ures :pointer))
+(defcfun ("mus_frame_offset" mus-frame-offset) :pointer (uf1 :pointer) (offset :double) (ures :pointer))
+(defcfun ("mus_frame_ref" mus-frame-ref) :double (f :pointer) (chan :int))
+(defcfun ("mus_frame_set" mus-frame-set) :double (f :pointer) (chan :int) (val :double))
+(defcfun ("mus_frame_copy" mus-frame-copy) :pointer (uf :pointer))
+(defcfun ("mus_frame_fill" mus-frame-fill) :double (uf :pointer) (val :double))
 
-(defcenum ("mus_mixer_p" mus-mixer-p) :boolean (ptr :pointer))
-(defcenum ("mus_make_empty_mixer" mus-make-empty-mixer) :pointer (chans :int))
-(defcenum ("mus_make_identity_mixer" mus-make-identity-mixer) :pointer (chans :int))
-;(defcenum mus_any *mus_make_mixer(int chans, ...);
-(defcenum ("mus_mixer_ref" mus-mixer-ref)  :double (f :pointer) (in :int) (out :int))
-(defcenum ("mus_mixer_set" mus-mixer-set) :double (f :pointer) (in :int) (out :int) (val :double))
-(defcenum ("mus_frame_to_frame" mus-frame-to-frame) :pointer (f :pointer) (ln :pointer) (out :pointer))
-(defcenum ("mus_sample_to_frame" mus-sample-to-frame) :pointer (f :pointer) (in :double) (out :pointer))
-(defcenum ("mus_frame_to_sample" mus-frame-to-sample) :double (f :pointer) (in :pointer))
-(defcenum ("mus_mixer_multiply" mus-mixer-multiply) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
-(defcenum ("mus_mixer_add" mus-mixer-add) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
-(defcenum ("mus_mixer_scale" mus-mixer-scale) :pointer (uf1 :pointer) (scaler :double) (ures :pointer))
-(defcenum ("mus_mixer_offset" mus-mixer-offset) :pointer (uf1 :pointer) (offset :double) (ures :pointer))
-(defcenum ("mus_make_scalar_mixer" mus-make-scalar-mixer) :pointer (chans :int) (scalar :double))
-(defcenum ("mus_mixer_copy" mus-mixer-copy) :pointer (uf :pointer))
-(defcenum ("mus_mixer_fill" mus-mixer-fill) :double (uf :pointer) (val :double))
+(defcfun ("mus_mixer_p" mus-mixer-p) :boolean (ptr :pointer))
+(defcfun ("mus_make_empty_mixer" mus-make-empty-mixer) :pointer (chans :int))
+(defcfun ("mus_make_identity_mixer" mus-make-identity-mixer) :pointer (chans :int))
+;(defcfun mus_any *mus_make_mixer(int chans, ...);
+(defcfun ("mus_mixer_ref" mus-mixer-ref)  :double (f :pointer) (in :int) (out :int))
+(defcfun ("mus_mixer_set" mus-mixer-set) :double (f :pointer) (in :int) (out :int) (val :double))
+(defcfun ("mus_frame_to_frame" mus-frame-to-frame) :pointer (f :pointer) (ln :pointer) (out :pointer))
+(defcfun ("mus_sample_to_frame" mus-sample-to-frame) :pointer (f :pointer) (in :double) (out :pointer))
+(defcfun ("mus_frame_to_sample" mus-frame-to-sample) :double (f :pointer) (in :pointer))
+(defcfun ("mus_mixer_multiply" mus-mixer-multiply) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcfun ("mus_mixer_add" mus-mixer-add) :pointer (f1 :pointer) (f2 :pointer) (res :pointer))
+(defcfun ("mus_mixer_scale" mus-mixer-scale) :pointer (uf1 :pointer) (scaler :double) (ures :pointer))
+(defcfun ("mus_mixer_offset" mus-mixer-offset) :pointer (uf1 :pointer) (offset :double) (ures :pointer))
+(defcfun ("mus_make_scalar_mixer" mus-make-scalar-mixer) :pointer (chans :int) (scalar :double))
+(defcfun ("mus_mixer_copy" mus-mixer-copy) :pointer (uf :pointer))
+(defcfun ("mus_mixer_fill" mus-mixer-fill) :double (uf :pointer) (val :double))
 
 (defcfun ("mus_frame_to_frame_mono" mus-frame-to-frame-mono) :pointer (frame :pointer) (mix :pointer) (out :pointer))
 (defcfun ("mus_frame_to_frame_stereo" mus-frame-to-stereo) :pointer (frame :pointer) (mix :pointer) (out :pointer))
@@ -485,7 +485,7 @@
 (defcfun ("mus_continue_frame_to_file" mus-continue-frame-to-file) :pointer (filename :string))
 
 (defcfun ("mus_locsig" mus-locsig) :void (ptr :pointer) (loc :ullong) (val :double))
-(defcfun ("mus_make_locsig" mus-make-locsig) :pointer (degree :double) (distance :double) (reverb :double) (chans :int) (output :pointer) (rev-chans :int) (revput :pointer) (type mus-interp))
+(defcfun ("mus_make_locsig" mus-make-locsig) :pointer (degree :double) (distance :double) (reverb :double) (chans :int) (output :pointer) (rev-chans :int) (revput :pointer) (type :mus-interp))
 (defcfun ("mus_locsig_p" mus-locsig-p) :boolean (ptr :pointer))
 (defcfun ("mus_locsig_ref" mus-locsig-ref) :double (ptr :pointer) (chan :int))
 (defcfun ("mus_locsig_set" mus-locsig-set) :double (ptr :pointer) (chan :int) (val :double))
@@ -496,27 +496,12 @@
 (defcfun ("mus_locsig_revf" mus-locsig-revf) :pointer (ptr :pointer))
 (defcfun ("mus_locsig_closure" mus-locsig-closure):void (ptr :pointer))
 
-;TODO maybe?
-;;   /* these are for the optimizer (run.c) */
-;; MUS_EXPORT void mus_locsig_mono_no_reverb(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_mono(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_stereo_no_reverb(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_stereo(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_safe_mono_no_reverb(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_safe_mono(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_safe_stereo_no_reverb(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT void mus_locsig_safe_stereo(mus_any *ptr, mus_long_t loc, mus_float_t val);
-;; MUS_EXPORT int mus_locsig_channels(mus_any *ptr);
-;; MUS_EXPORT int mus_locsig_reverb_channels(mus_any *ptr);
-;; MUS_EXPORT int mus_locsig_safety(mus_any *ptr);
-;; MUS_EXPORT void mus_locsig_function_reset(mus_any *ptr);
-
 (defcfun ("mus_move_sound_p" mus-move-sound-p) :boolean (ptr :pointer))
 (defcfun ("mus_move_sound" mus-move-sound) :double (ptr :pointer) (loc :ullong) (val :double))
 (defcfun ("mus_make_move_sound" mus-make-move-sound) :pointer 
   (start :ullong) (end :ullong) (out-channels :int) (rev-channels :int) (doppler-delay :pointer) 
   (doppler-env :pointer) (rev-env :pointer) (out-delays (:pointer :pointer)) (out-envs (:pointer :pointer))
-  (rev-envs (:poiner :pointer)) (out-map :int) (output :pointer) (revput :pointer) (free-arrays :boolean)
+  (rev-envs (:pointer :pointer)) (out-map :int) (output :pointer) (revput :pointer) (free-arrays :boolean)
   (free-gens :boolean))
 
 (defcfun ("mus_move_sound_outf" mus-move-sound-outf) :pointer (ptr :pointer))
@@ -540,7 +525,7 @@
 (defcfun ("mus_make_fft_window" mus-make-fft-window) (:pointer :double) (type :mus-fft-window-type) (size :ullong) (beta :double))
 (defcfun ("mus_make_fft_window_with_window" mus-make-fft-window-with-window) (:pointer :double) (type :mus-fft-window-type) (size :ullong) (beta :double) (mu :double) (window (:pointer :double)))
 (defcfun ("mus_fft_window_name" mus-fft-window-name) :string (window :mus-fft-window-type))
-(defcfun ("mus_fft_window_names" mus-fft-window-names) (:pointer :string)())
+(defcfun ("mus_fft_window_names" mus-fft-window-names) (:pointer :string))
 
 (defcfun ("mus_autocorrelate" mus-autocorrelate) (:pointer :double) (data (:pointer :double)) (n :ullong))
 (defcfun ("mus_correlate" mus-correlate) (:pointer :double) (data1 (:pointer :double)) (data2 (:pointer :double)) (n :ullong))
@@ -560,10 +545,10 @@
 ;(defcfun ("mus_granulate_set_edit_function" mus-granulate-set-edit-function) :void (ptr :pointer) ,int (*edit)(void *closure));
 
 (defcfun ("mus_set_file_buffer_size" mus-set-file-buffer-size) :ullong (size :ullong))
-(defcfun ("mus_file_buffer_size" mus-file-buffer-size) :ullong ())
+(defcfun ("mus_file_buffer_size" mus-file-buffer-size) :ullong)
 
 (defcfun ("mus_mix" mus-mix) :void (outfile :string) (infile :string) (out-start :ullong) (out-samps :ullong) (in-start :ullong) (mx :pointer) (envs (:pointer (:pointer :pointer))))
-(defcfun ("mus_mix_with_reader_and_writer" mus-mix-with-reader-and-writer) :void (outf :pointer) (inf :pointer) (out-start :ullong) (out-frames :ullong) (in-start :ullong) (umx :pointer) (envs (:pointer (:pointer :ponter))))
+(defcfun ("mus_mix_with_reader_and_writer" mus-mix-with-reader-and-writer) :void (outf :pointer) (inf :pointer) (out-start :ullong) (out-frames :ullong) (in-start :ullong) (umx :pointer) (envs (:pointer (:pointer :pointer))))
 (defcfun ("mus_apply" mus-apply) :double (gen :pointer) (f1 :double) (f2 :double))
 
 (defcfun ("mus_phase_vocoder_p" mus-phase-vocoder-p) :boolean (ptr :pointer))
@@ -592,7 +577,7 @@
 (defcfun ("mus_ssb_am_unmodulated" mus-ssb-am-unmodulated) :double (ptr :pointer) (insig :double))
 (defcfun ("mus_ssb_am" mus-ssb-am) :double (ptr :pointer) (insig :double) (fm :double))
 
-(defcfun ("mus_clear_sinc_tables" mus-clear-sinc-tables) :void ())
+(defcfun ("mus_clear_sinc_tables" mus-clear-sinc-tables) :void)
 (defcfun ("mus_environ" mus-environ) :pointer (gen :pointer))
 (defcfun ("mus_set_environ" mus-set-environ) :pointer (gen :pointer) (e :pointer))
 

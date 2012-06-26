@@ -57,7 +57,7 @@
 (defcfun ("mus_error" mus-error) :int (error :int) (format :string))
 (defcfun ("mus_print" mus-print) :void (format :string))
 (defcfun ("mus_format" mus-format) :pointer (format :string))
-(defcfun ("mus_snprintf" mus-sndprintf) :void (buffer :string) (buffer-len :int) (format :string))
+(defcfun ("mus_sndprintf" mus-sndprintf) :void (buffer :string) (buffer-len :int) (format :string))
 
 ;todo
 ;; typedef void mus_error_handler_t(int type, char *msg);
@@ -140,12 +140,23 @@
 (defcfun ("mus_sound_set_maxamps" mus-sound-set-maxamps) :int (ifile :string) (chans :int) (vals (:pointer :double)) (times (:pointer :double)))
 (defcfun ("mus_sound_maxamp_exists" mus-sound-maxamp-exists) :boolean (ifile :string))
 
-;todo
-;(defcfun ("mus_file_to_array" mus-file-to-array) :double (filename :string) (chan :int) (start :double) (samples :double) (array (:pointer :sample))) ;;todo mus_sample_t
-;(defcfun int mus_array_to_file :int (const char *filename, mus_sample_t *ddata, mus_long_t len, int srate, int channels);
-;(defcfun const char *mus_array_to_file_with_error :string (const char *filename, mus_sample_t *ddata, mus_long_t len, int srate, int channels);
-;(defcfun mus_long_t mus_file_to_float_array :double (const char *filename, int chan, mus_long_t start, mus_long_t samples, mus_float_t *array);
-;(defcfun int mus_float_array_to_file :int (const char *filename, mus_float_t *ddata, mus_long_t len, int srate, int channels);
+
+(defcfun ("mus_file_to_array" mus-file-to-array) :ullong (filename :string) (chan :int) (start :ullong) (samples :ullong) (array :pointer))
+
+(defun file->array (filename chan start samples array)
+  (ffa:with-pointer-to-array (array a-pointer :double (length array) :copy-out)
+    (mus-file-to-array (namestring filename) chan start samples a-pointer)))
+
+(defcfun ("mus_array_to_file" mus-array-to-file):int (filename :string) (ddata :pointer) (len :ullong) (srate :int) (channels :int))
+
+(defun array->file (filename ddata len srate channels)
+  (ffa:with-pointer-to-array (ddata a-pointer :double (length ddata) :copy-in)
+    (mus-array-to-file (namestring filename) a-pointer len srate channels)))
+
+(defcfun ("mus_array_to_file_with_error" mus-array-to-file-with-error) :string (filename :string) (ddata (:pointer :double)) (len :ullong) (srate :int) (channels :int))
+
+(defcfun ("mus_file_to_float_array" mus-file-to-float-array) :ullong (filename :string) (chan :int) (start :ullong) (samples :ullong) (array (:pointer :double)))
+(defcfun ("mus_float_array_to_file" mus-float-array-to-file) :int (filename :string) (ddata (:pointer :double)) (len :ullong) (srate :int) (channels :int))
 
 
 

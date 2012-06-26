@@ -2,7 +2,7 @@
 
 (asdf:defsystem #:zvuk
   :serial t
-  :depends-on (#:cffi)
+  :depends-on (#:cffi #:ffa)
   :components ((:file "package")
 	       (:file "library")
 	       (:file "sndlib")
