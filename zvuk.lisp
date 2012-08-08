@@ -1,6 +1,10 @@
 ;;;; clmsndlib.lisp
 (in-package #:zvuk)
 
+(defvar *srate* 44100)
+(defvar *channels* 1)
+(defvar *default-frequency* 0.0)
+
 (defun play-file (filename)
   (let ((fd (mus-sound-open-input filename)))
     (unless (= fd -1)

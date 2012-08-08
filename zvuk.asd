@@ -7,5 +7,7 @@
 	       (:file "library")
 	       (:file "sndlib")
 	       (:file "clm")
-               (:file "zvuk")))
+	       (:file "util")
+               (:file "zvuk")
+	       (:file "mus")))
 
