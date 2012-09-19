@@ -1,9 +1,11 @@
-;;;; clmsndlib.lisp
-(in-package #:zvuk)
+(in-package :zvuk)
 
 (defvar *srate* 44100)
 (defvar *channels* 1)
 (defvar *default-frequency* 0.0)
+
+(defvar *mailbox* (make-mailbox))
+(defparameter *player* (make-thread '%run-player))
 
 (defun play-file (filename)
   (let ((fd (mus-sound-open-input filename)))
@@ -35,7 +37,24 @@
 	     do (foreign-free (mem-aref bufs :pointer i)))
 	  (foreign-free bufs)
 	  (foreign-free obuf))))))
-			   
+
+(defun start-player ()
+  (when (or (not *player*) (not (thread-alive-p *player*)))
+    (setf *player* (make-thread '%run-player))))
+
+(defun stop-player ()
+  (when (and *player* (thread-alive-p *player*))
+    (terminate-thread *player*)))
+    
+(defun %run-player ()
+  (loop (%play-sound (receive-message *mailbox*))))
+
+(defun %play-sound (sound)
+  (pprint sound))
+
+(defun produce-sound ()
+  (loop for i to 10
+     do (send-message *mailbox* i)))
 
 ;; int main(int argc, char *argv[])
 ;; {
