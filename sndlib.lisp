@@ -163,7 +163,9 @@
 ;; -------- audio.c --------
 
 (defcfun ("mus_audio_describe" mus-audio-describe) :string)
-(defcfun ("mus_audio_open_output" mus-audio-open-output) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
+(defcfun ("mus_audio_open_output" %mus-audio-open-output) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
+(defun mus-audio-open-output (device srate chans format size) 
+    (%mus-audio-open-output device srate chans (foreign-enum-value 'audio-sizes format) size))
 
 (defcfun ("mus_audio_open_input" %mus-audio-open-input) :int (dev :int) (srate :int) (chans :int) (format :int) (size :int))
 (defun mus-audio-open-input (device srate channels format size)

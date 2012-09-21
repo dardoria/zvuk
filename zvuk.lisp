@@ -5,7 +5,7 @@
 (defvar *default-frequency* 0.0)
 
 (defvar *mailbox* (make-mailbox))
-(defparameter *player* (make-thread '%run-player))
+(defparameter *player* nil)
 
 (defun play-file (filename)
   (let ((fd (mus-sound-open-input filename)))
@@ -38,20 +38,35 @@
 	  (foreign-free bufs)
 	  (foreign-free obuf))))))
 
+(defstruct (player (:constructor %make-player (out-buffer out-bytes)))
+  (out-buffer)
+  (out-bytes)
+  (thread)
+  (dac))
+
+(defun make-player ()
+  (let* ((outbytes (* *buffer-size* *channels* 2))
+	 (out-buffer (foreign-alloc :short :count outbytes)))
+    (%make-player out-buffer outbytes)))
+
 (defun start-player ()
-  (when (or (not *player*) (not (thread-alive-p *player*)))
-    (setf *player* (make-thread '%run-player))))
+  (when (or (not *player*) (not (thread-alive-p (player-thread *player*))))
+    (setf *player* (make-player))
+    (setf (player-thread *player*) (make-thread '%run-player))))
 
 (defun stop-player ()
-  (when (and *player* (thread-alive-p *player*))
-    (terminate-thread *player*)))
-    
+  (when (and *player* (thread-alive-p (player-thread *player*)))
+    (foreign-free (player-out-buffer *player*))
+    (mus-audio-close (player-dac *player*))
+    (terminate-thread (player-thread *player*))))
+
 (defun %run-player ()
-  (loop (%play-sound (receive-message *mailbox*))))
-
-(defun %play-sound (sound)
-  (pprint sound))
-
+  (setf (player-dac *player*) (mus-audio-open-output 
+			       +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes *player*)))
+  (loop (let ((sound (receive-message *mailbox*)))
+	  (setf (mem-aref (player-out-buffer *player*) :short) (mus-sample-to-short sound))
+	  (mus-audio-write (player-dac *player*) (player-out-buffer *player*) (player-out-bytes *player*)))))
+     
 (defun produce-sound ()
   (loop for i to 10
      do (send-message *mailbox* i)))
