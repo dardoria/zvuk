@@ -46,7 +46,7 @@
 
 (defun make-player ()
   (let* ((outbytes (* *buffer-size* *channels* 2))
-	 (out-buffer (foreign-alloc :short :count outbytes)))
+	 (out-buffer (foreign-alloc :short :count (* *buffer-size* *channels*))))
     (%make-player out-buffer outbytes)))
 
 (defun start-player ()
@@ -58,52 +58,28 @@
   (when (and *player* (thread-alive-p (player-thread *player*)))
     (foreign-free (player-out-buffer *player*))
     (mus-audio-close (player-dac *player*))
+    (setf *mailbox* (make-mailbox))
     (terminate-thread (player-thread *player*))))
 
 (defun %run-player ()
+  ;;todo check if initialization was successfull
+  (mus-audio-initialize)
   (setf (player-dac *player*) (mus-audio-open-output 
 			       +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes *player*)))
-  (loop (let ((sound (receive-message *mailbox*)))
-	  (setf (mem-aref (player-out-buffer *player*) :short) (mus-sample-to-short sound))
-	  (mus-audio-write (player-dac *player*) (player-out-buffer *player*) (player-out-bytes *player*)))))
-     
+  (loop (multiple-value-bind (sound status)
+	    (receive-message *mailbox*)
+	  (when status
+	    (unwind-protect 
+		 (progn
+		   (setf (mem-aref (player-out-buffer *player*) :short) (mus-sample-to-short sound))
+		   (mus-audio-write (player-dac *player*) (player-out-buffer *player*) (player-out-bytes *player*))))))))
+  
 (defun produce-sound ()
-  (loop for i to 10
-     do (send-message *mailbox* i)))
+  (let ((testo (make-oscil)))
+    (loop for i to 10
+       do (send-message *mailbox* (oscil testo)))))
 
-;; int main(int argc, char *argv[])
-;; {
-;;   int fd, afd, i, j, n, k, chans, srate, outbytes;
-;;   mus_long_t frames;
-;;   mus_sample_t **bufs;
-;;   short *obuf;
-;;   mus_sound_initialize();	
-;;   fd = mus_sound_open_input(argv[1]);
-;;   if (fd != -1)
-;;     {
-;;       chans = mus_sound_chans(argv[1]);
-;;       srate = mus_sound_srate(argv[1]);
-;;       frames = mus_sound_frames(argv[1]);
-;;       outbytes = BUFFER_SIZE * chans * 2;
-;;       bufs = (mus_sample_t **)calloc(chans, sizeof(mus_sample_t *));
-;;       for (i=0;i<chans;i++) 
-;;         bufs[i] = (mus_sample_t *)calloc(BUFFER_SIZE, sizeof(mus_sample_t));
-;;       obuf = (short *)calloc(BUFFER_SIZE * chans, sizeof(short));
-;;       afd = mus_audio_open_output(MUS_AUDIO_DEFAULT, srate, chans, MUS_AUDIO_COMPATIBLE_FORMAT, outbytes);
-;;       if (afd != -1)
-;; 	{
-;; 	  for (i = 0; i < frames; i += BUFFER_SIZE)
-;; 	    {
-;; 	      mus_sound_read(fd, 0, BUFFER_SIZE - 1, chans, bufs);
-;; 	      for (k = 0, j = 0; k < BUFFER_SIZE; k++, j += chans)
-;; 		for (n = 0; n < chans; n++) 
-;;                   obuf[j + n] = MUS_SAMPLE_TO_SHORT(bufs[n][k]);
-;; 	      mus_audio_write(afd, (char *)obuf, outbytes);
-;; 	    }
-;; 	  mus_audio_close(afd);
-;; 	}
-;;       mus_sound_close_input(fd);
-;;       for (i = 0; i < chans; i++) free(bufs[i]);
-;;       free(bufs);
-;;       free(obuf);
-;;     }
+(defun test ()
+  (stop-player)
+  (start-player)
+  (produce-sound))
