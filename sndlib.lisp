@@ -59,14 +59,12 @@
 (defcfun ("mus_format" mus-format) :pointer (format :string))
 (defcfun ("mus_sndprintf" mus-sndprintf) :void (buffer :string) (buffer-len :int) (format :string))
 
-;todo
 ;; typedef void mus_error_handler_t(int type, char *msg);
-;; MUS_EXPORT mus_error_handler_t *mus_error_set_handler(mus_error_handler_t *new_error_handler);
-;; MUS_EXPORT int mus_make_error(const char *error_name);
-;; MUS_EXPORT const char *mus_error_type_to_string(int err);
+(defcfun ("mus_error_set_handler" mus-error-set-handler) :pointer (new-error-handler :pointer))
+(defcfun ("mus_error_type_to_string" mus-error-type-to-string) :pointer (err :int))
 
 ;; typedef void mus_print_handler_t(char *msg);
-;; MUS_EXPORT mus_print_handler_t *mus_print_set_handler(mus_print_handler_t *new_print_handler);
+(defcfun ("mus_print_set_handler" mus-print-set-handler) :pointer (new-print-handler :pointer))
 
 ;; typedef mus_sample_t mus_clip_handler_t(mus_sample_t val);
 ;; MUS_EXPORT mus_clip_handler_t *mus_clip_set_handler(mus_clip_handler_t *new_clip_handler);
@@ -171,9 +169,9 @@
 (defun mus-audio-open-input (device srate channels format size)
   (%mus-audio-open-input device srate channels (foreign-enum-value 'audio-sizes format) size))
   
-(defcfun ("mus_audio_write" mus-audio-write) :int (line :int) (buffer (:pointer :string)) (bytes :int))
+(defcfun ("mus_audio_write" mus-audio-write) :int (line :int) (buffer :pointer) (bytes :int))
 (defcfun ("mus_audio_close" mus-audio-close) :int (line :int))
-(defcfun ("mus_audio_read" mus-audio-read) :int (line :int) (buffer (:pointer :string)) (bytes :int))
+(defcfun ("mus_audio_read" mus-audio-read) :int (line :int) (buffer :pointer) (bytes :int))
 
 (defcfun ("mus_audio_write_buffers" mus-audio-write-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :boolean))
 (defcfun ("mus_audio_read_buffers" mus-audio-read-buffers) :int (line :int) (frames :int) (chans :int) (bufs :pointer) (output-format :int) (clipped :boolean))
@@ -212,7 +210,9 @@
 (defcfun ("mus_file_reopen_write" mus-file-reopen-write) :int (arg :string))
 (defcfun ("mus_file_close" mus-file-close) :int (fd :int))
 (defcfun ("mus_file_seek_frame" mus-file-seek-frame) :ullong (tfd :int) (frame :ullong))
+
 (defcfun ("mus_file_read" mus-file-read) :ullong (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer))
+
 (defcfun ("mus_file_read_chans" mus-file-read-chans) :ullong (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer) (cm :pointer))
 (defcfun ("mus_file_write" mus-file-write) :int (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer))
 (defcfun ("mus_file_read_any" mus-file-read-any) :ullong (fd :int) (beg :ullong) (end :ullong) (chans :int) (bufs :pointer) (cm :pointer))
