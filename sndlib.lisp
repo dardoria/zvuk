@@ -169,7 +169,11 @@
 (defun mus-audio-open-input (device srate channels format size)
   (%mus-audio-open-input device srate channels (foreign-enum-value 'audio-sizes format) size))
   
-(defcfun ("mus_audio_write" mus-audio-write) :int (line :int) (buffer :pointer) (bytes :int))
+(defcfun ("mus_audio_write" %mus-audio-write) :int (line :int) (buffer :pointer) (bytes :int))
+(defun mus-audio-write (line buffer bytes)
+  (ffa:with-pointer-to-array (buffer a-pointer :int16 (length buffer) :copy-in)
+    (%mus-audio-write line a-pointer bytes)))
+
 (defcfun ("mus_audio_close" mus-audio-close) :int (line :int))
 (defcfun ("mus_audio_read" mus-audio-read) :int (line :int) (buffer :pointer) (bytes :int))
 
