@@ -23,7 +23,6 @@
   (let ((fd (mus-sound-open-input filename)))
     (unless (= fd -1)
       (let* ((channels (mus-sound-chans filename))
-	     (srate (mus-sound-srate filename))
 	     (frames (mus-sound-frames filename))
 	     (buffers (foreign-alloc :pointer :count channels)))
 	;;allocate buffers for reading file
@@ -43,11 +42,9 @@
 		(send-message *mailbox* outbuffer)))
 
 	(mus-sound-close-input fd)
-	;;(loop for i below chans
-	;;   do (foreign-free (mem-aref bufs :pointer i)))
-	;;(foreign-free bufs)
-	;;(foreign-free obuf)
-	))))
+	(loop for i below channels
+	   do (foreign-free (mem-aref buffers :pointer i)))
+	(foreign-free buffers)))))
 
 (defstruct (player (:constructor %make-player (out-buffer out-bytes)))
   (out-buffer)
@@ -82,18 +79,4 @@
 	  (when status
 	    (unwind-protect 
 		 (progn
-					;(setf (mem-aref (player-out-buffer *player*) :short) (mus-sample-to-short sound))
 		   (mus-audio-write (player-dac *player*) sound (player-out-bytes *player*))))))))
-  
-(defun produce-sound ()
-  (let ((testo (make-oscil)))
-    (loop repeat 100
-       do (let ((outbuffer (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16)))) 
-	    (loop for i below (length outbuffer)
-	       do (setf (aref outbuffer i) (mus-sample-to-short (oscil testo))))
-	    (send-message *mailbox* outbuffer)))))
-
-(defun test ()
-  (stop-player)
-  (start-player)
-  (produce-sound))
