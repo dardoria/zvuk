@@ -50,7 +50,8 @@
   (out-buffer)
   (out-bytes)
   (thread)
-  (dac))
+  (dac)
+  (sounds '()))
 
 (defun make-player ()
   (let* ((outbytes (* *buffer-size* *channels* 2))
@@ -74,9 +75,15 @@
   (mus-audio-initialize)
   (setf (player-dac *player*) (mus-audio-open-output 
 			       +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes *player*)))
-  (loop (multiple-value-bind (sound status)
+  (loop (multiple-value-bind (sound-queue status)
 	    (receive-message *mailbox*)
 	  (when status
-	    (unwind-protect 
-		 (progn
-		   (mus-audio-write (player-dac *player*) sound (player-out-bytes *player*))))))))
+	    (setf (player-sounds *player*) (push sound-queue (player-sounds *player*)))
+	    
+	    (loop repeat 500
+	       do (loop for sound-queue in (player-sounds *player*)
+		     do (multiple-value-bind (sound ok)
+			    (receive-message sound-queue)
+			  (when ok
+			    ;;todo handle errors
+			    (mus-audio-write (player-dac *player*) sound (player-out-bytes *player*))))))))))
