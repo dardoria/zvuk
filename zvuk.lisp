@@ -16,7 +16,6 @@
 (defvar *channels* 1)
 (defvar *default-frequency* 0.0)
 
-(defvar *mailbox* (make-mailbox))
 (defparameter *player* nil)
 
 (defun play-file (filename)
@@ -24,6 +23,7 @@
     (unless (= fd -1)
       (let* ((channels (mus-sound-chans filename))
 	     (frames (mus-sound-frames filename))
+	     ;;todo use lisp arrays here
 	     (buffers (foreign-alloc :pointer :count channels)))
 	;;allocate buffers for reading file
 	(loop for p from 0 below channels
@@ -39,24 +39,23 @@
 		   do (loop for n from 0 below channels
 			 do (setf (aref outbuffer (+ j n)) 
 				  (mus-sample-to-short (mem-aref (mem-aref buffers :pointer n) :double k)))))
-		(send-message *mailbox* outbuffer)))
+		(outa outbuffer)))
 
 	(mus-sound-close-input fd)
 	(loop for i below channels
 	   do (foreign-free (mem-aref buffers :pointer i)))
 	(foreign-free buffers)))))
 
-(defstruct (player (:constructor %make-player (out-buffer out-bytes)))
-  (out-buffer)
+(defstruct (player (:constructor %make-player (out-bytes tracks)))
   (out-bytes)
   (thread)
   (dac)
-  (sounds '()))
+  (tracks))
 
-(defun make-player ()
-  (let* ((outbytes (* *buffer-size* *channels* 2))
-	 (out-buffer (foreign-alloc :short :count (* *buffer-size* *channels*))))
-    (%make-player out-buffer outbytes)))
+(defun make-player (&optional (tracks-number 2))
+  (let ((outbytes (* *buffer-size* *channels* 2))
+	(tracks (make-array tracks-number :initial-contents (loop repeat tracks-number collect (make-mailbox)))))
+    (%make-player outbytes tracks)))
 
 (defun start-player ()
   (when (or (not *player*) (not (thread-alive-p (player-thread *player*))))
@@ -64,26 +63,34 @@
     (setf (player-thread *player*) (make-thread '%run-player))))
 
 (defun stop-player ()
-  (when (and *player* (thread-alive-p (player-thread *player*)))
-    (foreign-free (player-out-buffer *player*))
+  (when *player* 
     (mus-audio-close (player-dac *player*))
-    (setf *mailbox* (make-mailbox))
-    (terminate-thread (player-thread *player*))))
+    (terminate-thread (player-thread *player*)))
+
+  (setf *player* nil))
+
+(defun outa (sound)
+  (send-message (aref (player-tracks *player*) 0) sound))
+
+(defun outb (sound)
+  (send-message (aref (player-tracks *player*) 1) sound))
 
 (defun %run-player ()
   ;;todo check if initialization was successfull
   (mus-audio-initialize)
   (setf (player-dac *player*) (mus-audio-open-output 
 			       +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes *player*)))
-  (loop (multiple-value-bind (sound-queue status)
-	    (receive-message *mailbox*)
-	  (when status
-	    (setf (player-sounds *player*) (push sound-queue (player-sounds *player*)))
-	    
-	    (loop repeat 500
-	       do (loop for sound-queue in (player-sounds *player*)
-		     do (multiple-value-bind (sound ok)
-			    (receive-message sound-queue)
-			  (when ok
-			    ;;todo handle errors
-			    (mus-audio-write (player-dac *player*) sound (player-out-bytes *player*))))))))))
+
+
+  (loop 
+     :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
+     :do (loop for i below (length outbuffer)
+	    :with snd = (loop for track across (player-tracks *player*)
+			   :with sample = 0
+			   :do (multiple-value-bind (sound ok)
+				   (receive-message-no-hang track)
+				 (when ok
+				   (incf sample sound)))
+			   :finally (return (/ sample (length (player-tracks *player*)))))
+	    :do (setf (aref outbuffer i) (mus-sample-to-short snd)))
+     :do (mus-audio-write (player-dac *player*) outbuffer (player-out-bytes *player*))))
