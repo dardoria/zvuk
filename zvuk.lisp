@@ -85,12 +85,13 @@
   (loop 
      :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
      :do (loop for i below (length outbuffer)
-	    :with snd = (loop for track across (player-tracks *player*)
-			   :with sample = 0
-			   :do (multiple-value-bind (sound ok)
-				   (receive-message-no-hang track)
-				 (when ok
-				   (incf sample sound)))
-			   :finally (return (/ sample (length (player-tracks *player*)))))
-	    :do (setf (aref outbuffer i) (mus-sample-to-short snd)))
+	    do (let ((snd (loop for track across (player-tracks *player*)
+			     :with sample = 0
+			     :do (multiple-value-bind (sound ok)
+				     (receive-message-no-hang track)
+				   (when ok
+				     (incf sample sound)))
+			     :finally (return (/ sample (length (player-tracks *player*)))))))
+		 (setf (aref outbuffer i) (mus-sample-to-short snd))))
+;;     :do (print outbuffer)))
      :do (mus-audio-write (player-dac *player*) outbuffer (player-out-bytes *player*))))
