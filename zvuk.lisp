@@ -46,15 +46,31 @@
 	   do (foreign-free (mem-aref buffers :pointer i)))
 	(foreign-free buffers)))))
 
+(defstruct (controller (:constructor %make-controller (thread player)))
+  (thread)
+  (player))
+
+(defun make-controller (&optional (tracks-count 2))
+  (let ((controller (%make-controller 
+		     (make-thread '%run-controller)
+		     (make-player tracks-count))))
+    (run-controller controller)
+    controller))
+
+(defun run-controller (controller)
+  ;;todo listen to message
+  ;;todo process commands
+  )
+  
 (defstruct (player (:constructor %make-player (out-bytes tracks)))
   (out-bytes)
   (thread)
   (dac)
   (tracks))
 
-(defun make-player (&optional (tracks-number 2))
+(defun make-player (&optional (tracks-count 2))
   (let ((outbytes (* *buffer-size* *channels* 2))
-	(tracks (make-array tracks-number :initial-contents (loop repeat tracks-number collect (make-mailbox)))))
+	(tracks (make-array tracks-count :initial-contents (loop repeat tracks-count collect (make-mailbox)))))
     (%make-player outbytes tracks)))
 
 (defun start-player ()
