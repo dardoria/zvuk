@@ -16,7 +16,22 @@
 (defvar *channels* 1)
 (defvar *default-frequency* 0.0)
 
+;;todo get rid of this
 (defparameter *player* nil)
+(defparameter *controller* nil)
+
+(defmacro with-sound (&rest body) 
+  `(make-thread (lambda ()
+		  (send-message (controller-message-box *controller*) :start)
+		  (unwind-protect
+		       (progn ,@body)
+		    (send-message (controller-message-box *controller*) :stop)))))
+
+(defun outa (sound)
+  (send-message (aref (player-tracks *player*) 0) sound))
+
+(defun outb (sound)
+  (send-message (aref (player-tracks *player*) 1) sound))
 
 (defun play-file (filename)
   (let ((fd (mus-sound-open-input filename)))
@@ -46,22 +61,31 @@
 	   do (foreign-free (mem-aref buffers :pointer i)))
 	(foreign-free buffers)))))
 
-(defstruct (controller (:constructor %make-controller (thread player)))
-  (thread)
-  (player))
+;;;;Controller
+(defstruct (controller (:constructor %make-controller (#|thread |# player message-box)))
+  ;;todo do i need this
+  ;;(thread)
+  (player)
+  (message-box))
 
 (defun make-controller (&optional (tracks-count 2))
   (let ((controller (%make-controller 
-		     (make-thread '%run-controller)
-		     (make-player tracks-count))))
-    (run-controller controller)
+		     ;;todo do i need this?
+		     ;;(make-thread '%run-controller)
+		     (make-player tracks-count)
+		     (make-mailbox))))
+    (make-thread 'run-controller :arguments '(controller))
     controller))
 
 (defun run-controller (controller)
-  ;;todo listen to message
+  ;;todo receive commands
   ;;todo process commands
   )
-  
+
+(defun initialize ()
+  (setf *controller* (make-controller)))
+
+;;;; Player  
 (defstruct (player (:constructor %make-player (out-bytes tracks)))
   (out-bytes)
   (thread)
@@ -85,12 +109,6 @@
 
   (setf *player* nil))
 
-(defun outa (sound)
-  (send-message (aref (player-tracks *player*) 0) sound))
-
-(defun outb (sound)
-  (send-message (aref (player-tracks *player*) 1) sound))
-
 (defun %run-player ()
   ;;todo check if initialization was successfull
   (mus-audio-initialize)
@@ -109,5 +127,4 @@
 				     (incf sample sound)))
 			     :finally (return (/ sample (length (player-tracks *player*)))))))
 		 (setf (aref outbuffer i) (mus-sample-to-short snd))))
-;;     :do (print outbuffer)))
      :do (mus-audio-write (player-dac *player*) outbuffer (player-out-bytes *player*))))
