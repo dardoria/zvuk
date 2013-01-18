@@ -19,13 +19,11 @@
   :mus-shorten :mus-tta :mus-wavpack :mus-sox
   :mus-num-header-types)
 
-
 (defcenum audio-sizes 
   :mus-unknown :mus-bshort :mus-mulaw :mus-byte :mus-bfloat :mus-bint :mus-alaw :mus-ubyte :mus-b24int
   :mus-bdouble :mus-lshort :mus-lint :mus-lfloat :mus-ldouble :mus-ubshort :mus-ulshort :mus-l24int
   :mus-bintn :mus-lintn :mus-bfloat-unscaled :mus-lfloat-unscaled :mus-bdouble-unscaled :mus-ldouble-unscaled
   :mus-num-data-formats)
-
 
 (defcenum error-codes 
   :mus-no-error :mus-no-frequency :mus-no-phase :mus-no-gen :mus-no-length
