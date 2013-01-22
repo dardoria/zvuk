@@ -64,9 +64,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;Controller
-(defstruct (controller (:constructor %make-controller (#|thread |# player message-box)))
-  ;;todo do i need this
-  ;;(thread)
+(defstruct (controller (:constructor %make-controller (player message-box)))
   (player)
   (message-box))
 
@@ -86,11 +84,10 @@
 	    ((:start) (incf stream-count))
 	    ((:stop) (decf stream-count)))
 
-	 ;;check for errors and cleanup stream-count
-	 (if (> stream-count 0)
-	     (start-player controller)
-	     ;;todo check if this will not cut off something in the player queue
-	     (stop-player controller)))))
+	 ;;when stream count is 0 the player thread will stop automatically
+	 ;;this means that currently the stop command is a no-op
+	 (when (> stream-count 0)
+	     (start-player controller)))))
 
 (defun initialize ()
   (setf *controller* (make-controller)))
@@ -121,24 +118,29 @@
 	     (player-thread (controller-player controller))
 	     (thread-alive-p (player-thread (controller-player controller))))
     (mus-audio-close (player-dac (controller-player controller)))
-    (terminate-thread (player-thread (controller-player controller))))
-
-  (setf (controller-player controller) nil))
+    (terminate-thread (player-thread (controller-player controller)))))
 
 (defun %run-player (player)
   (mus-audio-initialize)
   (setf (player-dac player) (mus-audio-open-output 
 			     +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes player)))
 
-  (loop 
+  (loop
+     ;;todo this buffer should be cleaned
      :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
-     :do (loop for i below (length outbuffer)
-	    do (let ((snd (loop for track across (player-tracks player)
-			     :with sample = 0
-			     :do (multiple-value-bind (sound ok)
-				     (receive-message-no-hang track)
-				   (when ok
-				     (incf sample sound)))
-			     :finally (return (/ sample (length (player-tracks player)))))))
-		 (setf (aref outbuffer i) (mus-sample-to-short snd))))
-     :do (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))))
+     :with track-count = 0
+     :do (loop named outer for i below (length outbuffer)
+	    :do (setf track-count 0)
+	    :do (let ((snd (loop for track across (player-tracks player)
+			      :with sample = 0
+			      :do (multiple-value-bind (sound ok)
+				      (receive-message-no-hang track)
+				    (when ok
+				      (incf track-count)
+				      (incf sample sound)))
+			      :finally (if (> track-count 0)
+					   (return (/ sample track-count))
+					   (return-from outer)))))
+		  (setf (aref outbuffer i) (mus-sample-to-short snd))))
+     :do (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))
+     :while (> track-count 0)))
