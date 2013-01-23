@@ -1,0 +1,41 @@
+Copyright 2012-2013 Boian Tzonev
+
+This product includes software developed by Boian Tzonev
+(dardoria.net)
+
+It is based on and uses code from:
+- sndlib: a library written by Bill Schottstaedt (bil@ccrma.stanford.edu).
+Except where otherwise noted, it is Copyright 1996-2008 The Board of Trustees 
+of Stanford University.
+
+sndlib is distributed under the following license:
+
+The authors hereby grant permission to use, copy, modify, distribute,
+and license this software and its documentation for any purpose.  No
+written agreement, license, or royalty fee is required.  Modifications
+to this software may be copyrighted by their authors and need not
+follow the licensing terms described here.
+
+- clm: a sound synthesis package written by Bill Schottstaedt (bil@ccrma.stanford.edu).
+Except where otherwise noted, it is Copyright 1989-2003 The Board of Trustees 
+of Stanford University.
+
+clm is distributed under the following license:
+
+The authors hereby grant permission to use, copy, modify, distribute,
+and license this software and its documentation for any purpose.  No
+written agreement, license, or royalty fee is required.  Modifications
+to this software may be copyrighted by their authors and need not
+follow the licensing terms described here.
+
+- snd: a sound editor written by Bill Schottstaedt (bil@ccrma.stanford.edu).
+Except where otherwise noted, it is Copyright 1996-2012 The Board of Trustees 
+of Stanford University.	
+
+snd is distributed under the following license:
+
+The authors hereby grant permission to use, copy, modify, distribute,
+and license this software and its documentation for any purpose.  No
+written agreement, license, or royalty fee is required.  Modifications
+to this software may be copyrighted by their authors and need not
+follow the licensing terms described here.
