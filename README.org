@@ -1,1 +1,40 @@
-This is the stub README.txt for the "zvuk" project.
+* Zvuk
+  Zvuk is a synthesis package built on top of sndlib and clm.
+  
+  It differs in the following ways from clm:
+  - it uses cffi to provide bindings to (almost) the full api of sndlib
+  - it doesn't do intermediate compilation to C
+  - it outputs sound directly to the DAC and not to a sound file
+
+  Zvuk tries to maintain the same API as clm.
+
+* Status
+  Experimental. 
+  Zvuk is in very early state and is barely usable. It might
+  produce noise, uncorrect pitches or pauses during playback.
+
+* License
+  Zvuk is licensed under the Apache License, Version 2.0
+  See LICENSE for details.
+
+* Compatibility
+  Zvuk runs only in SBCL as it uses code from sb-contrib.
+  It has been run only on Linux.
+
+* Installation
+  Zvuk can be installed via asdf. It requires that
+  sndlib is built/installed.
+
+  Sndlib sources can be rertieved from here:
+  https://ccrma.stanford.edu/software/snd/sndlib/
+
+* Usage
+  
+  To initialize the DAC call:
+  #+BEGIN_SRC lisp
+  (initialize)
+  #+END_SRC
+
+  Some of the usual generators like oscillator, sawtooth wave, triangle wave etc. from clm should work.
+  See test.lisp for example(s).
+  See mus.lisp for what generators are available.
