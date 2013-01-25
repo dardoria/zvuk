@@ -35,6 +35,28 @@
   (initialize)
   #+END_SRC
 
-  Some of the usual generators like oscillator, sawtooth wave, triangle wave etc. from clm should work.
-  See test.lisp for example(s).
-  See mus.lisp for what generators are available.
+  To produce sound wrap the generator code in
+  #+BEGIN_SRC lisp
+  (with-sound 
+     ;;generator code
+  )
+  #+END_SRC
+
+** Generators
+   delay
+   all-pass
+   oscillator
+   triangle-wave
+   square-wave
+   sawtooth-wave
+   pulse-train
+
+** Working with files
+   #+BEGIN_SRC lisp
+   (load-sample-file file-name channel start samples)
+   #+END_SRC
+   Returns an array with the samples in the specified file.
+
+** Examples   
+   See test.lisp for usage example(s).
+ 

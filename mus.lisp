@@ -1,21 +1,20 @@
-;;    Copyright 2012 Boian Tzonev <boiantz@gmail.com>
+;; Copyright 2012 Boian Tzonev <boiantz@gmail.com>
 
-;;    Licensed under the Apache License, Version 2.0 (the "License");
-;;     you may not use this file except in compliance with the License.
-;;     You may obtain a copy of the License at
+;; Licensed under the Apache License, Version 2.0 (the "License");
+;; you may not use this file except in compliance with the License.
+;; You may obtain a copy of the License at
 
-;;        http://www.apache.org/licenses/LICENSE-2.0
+;;     http://www.apache.org/licenses/LICENSE-2.0
 
-;;    Unless required by applicable law or agreed to in writing, software
-;;     distributed under the License is distributed on an "AS IS" BASIS,
-;;     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-;;     See the License for the specific language governing permissions and
-;;     limitations under the License.
+;; Unless required by applicable law or agreed to in writing, software
+;; distributed under the License is distributed on an "AS IS" BASIS,
+;; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;; See the License for the specific language governing permissions and
+;; limitations under the License.
 
 (cl:in-package :zvuk)
 
 (defconstant +two-pi+ (* 2 pi))
-
 
 (defun hz->radians (val) (* val (/ +two-pi+ *srate*)))
 
@@ -289,3 +288,9 @@
 					; use ncos for a better pulse
 	0.0)
     (incf (pulse-train-phase s) (+ (pulse-train-freq s) fm))))
+
+;;;;sample
+(defun load-sample-file (file-name channel start samples)
+  (let ((array (make-array samples :element-type 'double-float))) 
+    (file->array file-name channel start samples array)
+    array))
