@@ -42,10 +42,13 @@
 		    (send-message (controller-message-box *controller*) :stop)))))
 
 (defun outa (sound)
-  (send-message (aref (player-tracks (controller-player *controller*)) 0) sound))
+  (send-message (aref (player-channels (controller-player *controller*)) 0) sound))
 
 (defun outb (sound)
-  (send-message (aref (player-tracks (controller-player *controller*)) 1) sound))
+  (send-message (aref (player-channels (controller-player *controller*)) 1) sound))
+
+(defun out-any (sound channel-number)
+  (send-message (aref (player-channels (controller-player *controller*)) channel-number) sound))
 
 (defun play-file (filename)
   (with-sound
@@ -79,11 +82,11 @@
   (player)
   (message-box))
 
-(defun make-controller (&optional (tracks-count 2))
+(defun make-controller (&optional (channels-count 2))
   (let ((controller (%make-controller 
 		     ;;todo do i need this?
 		     ;;(make-thread '%run-controller)
-		     (make-player tracks-count)
+		     (make-player channels-count)
 		     (make-mailbox))))
     (make-thread 'run-controller :arguments (list controller))
     controller))
@@ -100,21 +103,21 @@
 	 (when (> stream-count 0)
 	     (start-player controller)))))
 
-(defun initialize ()
-  (setf *controller* (make-controller)))
+(defun initialize (&optional (channels-count 2))
+  (setf *controller* (make-controller channels-count)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Player
-(defstruct (player (:constructor %make-player (out-bytes tracks)))
+(defstruct (player (:constructor %make-player (out-bytes channels)))
   (out-bytes)
   (thread)
   (dac)
-  (tracks))
+  (channels))
 
-(defun make-player (&optional (tracks-count 2))
+(defun make-player (&optional (channels-count 2))
   (let ((outbytes (* *buffer-size* *channels* 2))
-	(tracks (make-array tracks-count :initial-contents (loop repeat tracks-count collect (make-mailbox)))))
-    (%make-player outbytes tracks)))
+	(channels (make-array channels-count :initial-contents (loop repeat channels-count collect (make-mailbox)))))
+    (%make-player outbytes channels)))
 
 (defun start-player (controller)
   (when (not (and (controller-player controller)
@@ -139,19 +142,19 @@
   (loop
      ;;todo this buffer should be cleaned
      :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
-     :with track-count = 0
+     :with channel-count = 0
      :do (loop named outer for i below (length outbuffer)
-	    :do (setf track-count 0)
-	    :do (let ((snd (loop for track across (player-tracks player)
+	    :do (setf channel-count 0)
+	    :do (let ((snd (loop for channel across (player-channels player)
 			      :with sample = 0
 			      :do (multiple-value-bind (sound ok)
-				      (receive-message-no-hang track)
+				      (receive-message-no-hang channel)
 				    (when ok
-				      (incf track-count)
+				      (incf channel-count)
 				      (incf sample sound)))
-			      :finally (if (> track-count 0)
-					   (return (/ sample track-count))
+			      :finally (if (> channel-count 0)
+					   (return (/ sample channel-count))
 					   (return-from outer)))))
 		  (setf (aref outbuffer i) (mus-sample-to-short snd))))
      :do (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))
-     :while (> track-count 0)))
+     :while (> channel-count 0)))

@@ -18,7 +18,7 @@
     (with-sound    
 	(let ((testo (make-oscil freq)))
 	  (loop repeat (* 100000)
-	     do (outa (oscil testo))))))
+	     do (out-any (oscil testo) 0)))))
 
 (defun simple()
   (let ((o1 (mus-make-oscil 440.0d0 0.0d0))
