@@ -28,6 +28,9 @@
   Sndlib sources can be rertieved from here:
   https://ccrma.stanford.edu/software/snd/sndlib/
 
+  Zvuk is not part of quicklisp but it can be loaded as a local project. See 
+  http://www.quicklisp.org/beta/faq.html - Can I load a local project that isn't part of Quicklisp? for instructions.
+
 * Usage
   
   To initialize the DAC call:
@@ -43,13 +46,13 @@
   #+END_SRC
 
 ** Generators
-   delay
-   all-pass
-   oscillator
-   triangle-wave
-   square-wave
-   sawtooth-wave
-   pulse-train
+   - delay
+   - all-pass
+   - oscillator
+   - triangle-wave
+   - square-wave
+   - sawtooth-wave
+   - pulse-train
 
 ** Working with files
    #+BEGIN_SRC lisp

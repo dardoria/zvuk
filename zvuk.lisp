@@ -48,33 +48,30 @@
   (send-message (aref (player-tracks (controller-player *controller*)) 1) sound))
 
 (defun play-file (filename)
-  ;;todo this doesn't work currently
-  (let ((fd (mus-sound-open-input filename)))
-    (unless (= fd -1)
-      (let* ((channels (mus-sound-chans filename))
-	     (frames (mus-sound-frames filename))
-	     ;;todo use lisp arrays here
-	     (buffers (foreign-alloc :pointer :count channels)))
-	;;allocate buffers for reading file
-	(loop for p from 0 below channels
-	   do (setf (mem-aref buffers :pointer p) (foreign-alloc :double :count *buffer-size*)))
-	
-	(loop for i from 0 below frames by *buffer-size*
-	     
-	   ;;read from file
-	   do (let ((outbuffer (make-array (* *buffer-size* channels) :element-type '(signed-byte 16))))
-		(mus-sound-read fd 0 (- *buffer-size* 1) channels buffers)
-		(loop for k from 0 below *buffer-size*
-		   for j from 0 by channels
-		   do (loop for n from 0 below channels
-			 do (setf (aref outbuffer (+ j n)) 
-				  (mus-sample-to-short (mem-aref (mem-aref buffers :pointer n) :double k)))))
-		(outa outbuffer)))
+  (with-sound
+      (let ((fd (mus-sound-open-input filename)))
+	(unless (= fd -1)
+	  (let* ((channels (mus-sound-chans filename))
+		 (frames (mus-sound-frames filename))
+		 ;;todo use lisp arrays here
+		 (buffers (foreign-alloc :pointer :count channels)))
+	    ;;allocate buffers for reading file
+	    (loop for p from 0 below channels
+	       do (setf (mem-aref buffers :pointer p) (foreign-alloc :double :count *buffer-size*)))
+	    
+	    (loop for i from 0 below frames by *buffer-size*
+	       ;;read from file
+	       do (mus-sound-read fd 0 (- *buffer-size* 1) channels buffers)
+	       ;; output samples
+	       do (loop for k from 0 below *buffer-size*
+		     for j from 0 by channels
+		     do (loop for n from 0 below channels
+			   do (outa (mem-aref (mem-aref buffers :pointer n) :double k)))))
 
-	(mus-sound-close-input fd)
-	(loop for i below channels
-	   do (foreign-free (mem-aref buffers :pointer i)))
-	(foreign-free buffers)))))
+	    (mus-sound-close-input fd)
+	    (loop for i below channels
+	       do (foreign-free (mem-aref buffers :pointer i)))
+	    (foreign-free buffers))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;Controller

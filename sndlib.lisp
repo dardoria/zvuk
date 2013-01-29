@@ -82,10 +82,16 @@
 ;; MUS_EXPORT mus_clip_handler_t *mus_clip_set_handler(mus_clip_handler_t *new_clip_handler);
 
 (defcfun ("mus_sound_samples" mus-sound-samples) :ullong (arg :string))
-(defcfun ("mus_sound_frames" mus-sound-frames) :ullong (arg :string))
+(defcfun ("mus_sound_frames" %mus-sound-frames) :ullong (filename :string))
+(defun mus-sound-frames (filename)
+  (%mus-sound-frames (namestring filename)))
+
 (defcfun ("mus_sound_datum_size" mus-sound-datum-size) :int (arg :string))
 (defcfun ("mus_sound_data_location" mus-sound-data-location) :ullong (arg :string))
-(defcfun ("mus_sound_chans" mus-sound-chans) :int (arg :string))
+(defcfun ("mus_sound_chans" %mus-sound-chans) :int (filename :string))
+(defun mus-sound-chans (filename)
+  (%mus-sound-chans (namestring filename)))
+
 (defcfun ("mus_sound_srate" mus-sound-srate) :int (arg :string))
 (defcfun ("mus_sound_header_type" msu-sound-header-type) :int (arg :string))
 (defcfun ("mus_sound_data_format" mus-sound-data-format) :int (arg :string))
@@ -140,7 +146,10 @@
 (defcfun ("mus_sound_set_loop_info" mus-sound-set-loop-info) :void (arg :string) (loop :int))
 (defcfun ("mus_sound_mark_info" mus-sound-mark-info) :int (arg :string) (mark-ids :pointer) (mark-positions :pointer))
 
-(defcfun ("mus_sound_open_input" mus-sound-open-input) :int (arg :string))
+(defcfun ("mus_sound_open_input" %mus-sound-open-input) :int (filename :string))
+(defun mus-sound-open-input (filename)
+  (%mus-sound-open-input (namestring filename)))
+
 (defcfun ("mus_sound_open_output" mus-sound-output) :int (arg :string) (srate :int) (chans :int) (data-format :int) (header-type :int) (comment :string))
 (defcfun ("mus_sound_reopen_output" mus-sound-reopen-output) :int (arg :string) (chans :int) (format :int) (type :int) (data-loc :double))
 (defcfun ("mus_sound_close_input" mus-sound-close-input) :int (fd :int))
