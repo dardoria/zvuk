@@ -12,6 +12,36 @@
 ;;     See the License for the specific language governing permissions and
 ;;     limitations under the License.
 
-(defpackage :zvuk
-  (:use :cl :cffi :sb-thread :sb-concurrency))
+(cl:defpackage :zvuk
+  (:use :cl :cffi :sb-thread :sb-concurrency)
+  (:export #:load-sample-file
+	   #:pulse-train
+	   #:make-pulse-train
+	   #:sawtooth-wave
+	   #:make-sawtooth-wave
+	   #:square-wave
+	   #:make-square-wave
+	   #:triangle-wave
+	   #:make-triangle-wave
+	   #:tri-val
+	   #:fix-up-phase
+	   #:oscil
+	   #:make-oscil
+	   #:asymmetric-fm
+	   #:make-asymmetric-fm
+	   #:comb
+	   #:make-comb
+	   #:all-pass
+	   #:make-all-pass
+	   #:delay
+	   #:delay-tick
+	   #:tap
+	   #:make-delay
+	   #:rectangular->polar
+	   #:hz->radians
+	   #:initialize
+	   #:with-sound
+	   #:outa
+	   #:outb
+	   #:out-any))
 
