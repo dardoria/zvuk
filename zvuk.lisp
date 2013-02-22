@@ -123,8 +123,8 @@
   (when (not (and (controller-player controller)
 		  (player-thread (controller-player controller))
 		  (thread-alive-p (player-thread (controller-player controller)))))
-    (setf (controller-player controller) (make-player))
-    (setf (player-thread (controller-player controller)) 
+    (setf (controller-player controller) (make-player (length (player-channels (controller-player controller)))))
+    (setf (player-thread (controller-player controller))
 	  (make-thread '%run-player :arguments (list (controller-player controller))))))
 
 (defun stop-player (controller)
