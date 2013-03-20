@@ -37,9 +37,23 @@
 (defmacro with-sound (&rest body) 
   `(make-thread (lambda ()
 		  (send-message (controller-message-box *controller*) :start)
-		  (unwind-protect
-		       (progn ,@body)
-		    (send-message (controller-message-box *controller*) :stop)))))
+		  
+		  (let ((%output (make-array *buffer-size* :fill-pointer 0))
+			(%channel 0))
+		    ,@body
+		    (when (> (fill-pointer %output) 0)
+		      (send-message (aref (player-channels (controller-player *controller*)) %channel) %output)))
+
+		  (send-message (controller-message-box *controller*) :stop))))
+
+(defmacro test-with-sound (&rest body) 
+  `(let ((%output (make-array *buffer-size* :fill-pointer 0))
+	 ;(%channel))
+	 )
+     (declare (special %output))
+     ,@body
+     (when (> (fill-pointer %output) 0)
+       (print %output))))
 
 (defun outa (sound)
   (send-message (aref (player-channels (controller-player *controller*)) 0) sound))
@@ -47,8 +61,14 @@
 (defun outb (sound)
   (send-message (aref (player-channels (controller-player *controller*)) 1) sound))
 
-(defun out-any (sound channel-number)
-  (send-message (aref (player-channels (controller-player *controller*)) channel-number) sound))
+(defun out-any (sound channel-number &optional (output (symbol-value '%output)))
+;  (declare (optimize (safety 0)))
+;    (setf channel channel-number)
+  (unless (vector-push sound output) ;;todo this will skip one
+    (print output)
+    ;;(send-message (aref (player-channels (controller-player *controller*)) channel-number) buffer)
+    (setf (fill-pointer output) 0)
+))
 
 (defun play-file (filename)
   (with-sound
