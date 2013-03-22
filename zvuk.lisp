@@ -38,37 +38,28 @@
   `(make-thread (lambda ()
 		  (send-message (controller-message-box *controller*) :start)
 		  
-		  (let ((%output (make-array *buffer-size* :fill-pointer 0))
+		  (let ((%output (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16) :fill-pointer 0 :initial-element 0))
 			(%channel 0))
+		    (declare (special %output) (special %channel))
 		    ,@body
-		    (when (> (fill-pointer %output) 0)
+		    (when (> (fill-pointer %output) 1)
 		      (send-message (aref (player-channels (controller-player *controller*)) %channel) %output)))
-
+		
 		  (send-message (controller-message-box *controller*) :stop))))
 
-(defmacro test-with-sound (&rest body) 
-  `(let ((%output (make-array *buffer-size* :fill-pointer 0))
-	 ;(%channel))
-	 )
-     (declare (special %output))
-     ,@body
-     (when (> (fill-pointer %output) 0)
-       (print %output))))
+(defun out-any (sound channel-number &optional (output (symbol-value '%output)) (channel (symbol-value '%channel)))
+;  (declare (optimize (safety 0)))
+  (setf channel channel-number)
+  (unless (vector-push (mus-sample-to-short sound) output)
+    (send-message (aref (player-channels (controller-player *controller*)) channel-number) output)
+    (setf (fill-pointer output) 0)
+    (vector-push (mus-sample-to-short sound) output)))
 
 (defun outa (sound)
-  (send-message (aref (player-channels (controller-player *controller*)) 0) sound))
+  (out-any sound 0))
 
 (defun outb (sound)
-  (send-message (aref (player-channels (controller-player *controller*)) 1) sound))
-
-(defun out-any (sound channel-number &optional (output (symbol-value '%output)))
-;  (declare (optimize (safety 0)))
-;    (setf channel channel-number)
-  (unless (vector-push sound output) ;;todo this will skip one
-    (print output)
-    ;;(send-message (aref (player-channels (controller-player *controller*)) channel-number) buffer)
-    (setf (fill-pointer output) 0)
-))
+  (out-any sound 1))
 
 (defun play-file (filename)
   (with-sound
@@ -160,21 +151,36 @@
 			     +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes player)))
 
   (loop
-     ;;todo this buffer should be cleaned
-     :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
      :with channel-count = 0
-     :do (loop named outer for i below (length outbuffer)
+     :do (loop named outer
 	    :do (setf channel-count 0)
-	    :do (let ((snd (loop for channel across (player-channels player)
-			      :with sample = 0
-			      :do (multiple-value-bind (sound ok)
-				      (receive-message-no-hang channel)
-				    (when ok
-				      (incf channel-count)
-				      (incf sample sound)))
-			      :finally (if (> channel-count 0)
-					   (return (/ sample channel-count))
-					   (return-from outer)))))
-		  (setf (aref outbuffer i) (mus-sample-to-short snd))))
-     :do (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))
+	    :do (loop for channel across (player-channels player)
+		   :do (multiple-value-bind (outbuffer ok)
+			   (receive-message-no-hang channel)
+			 (when ok
+			   (incf channel-count)
+			   (print outbuffer)
+			   (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))))
+		   :finally (unless (> channel-count 0)
+			      (return-from outer))))
      :while (> channel-count 0)))
+
+;;   (loop
+;;      ;;todo this buffer should be cleaned
+;;      :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
+;;      :with channel-count = 0
+;;      :do (loop named outer for i below (length outbuffer)
+;; 	    :do (setf channel-count 0)
+;; 	    :do (let ((snd (loop for channel across (player-channels player)
+;; 			      :with sample = 0
+;; 			      :do (multiple-value-bind (sound ok)
+;; 				      (receive-message-no-hang channel)
+;; 				    (when ok
+;; 				      (incf channel-count)
+;; 				      (incf sample sound)))
+;; 			      :finally (if (> channel-count 0)
+;; 					   (return (/ sample channel-count))
+;; 					   (return-from outer)))))
+;; 		  (setf (aref outbuffer i) (mus-sample-to-short snd))))
+;;      :do (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))
+;;      :while (> channel-count 0)))

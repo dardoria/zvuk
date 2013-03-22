@@ -28,8 +28,6 @@
 		(mus-oscil o1 0.0d0 0.0d0)
 		(mus-oscil o2 0.0d0 0.0d0)))))
 
-
-	  
 (defun test-sample-file (file-name channel start samples)
   (let ((sample-array 
 	 (load-sample-file file-name channel start samples)))
