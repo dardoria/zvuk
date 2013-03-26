@@ -43,7 +43,7 @@
 		    (declare (special %output) (special %channel))
 		    ,@body
 		    (when (> (fill-pointer %output) 1)
-		      (send-message (aref (player-channels (controller-player *controller*)) %channel) %output)))
+		      (%send-buffer %output %channel)))
 		
 		  (send-message (controller-message-box *controller*) :stop))))
 
@@ -51,8 +51,10 @@
 ;  (declare (optimize (safety 0)))
   (setf channel channel-number)
   (unless (vector-push (mus-sample-to-short sound) output)
-    (send-message (aref (player-channels (controller-player *controller*)) channel-number) output)
+    (%send-buffer output channel-number)
+    ;(send-message (aref (player-channels (controller-player *controller*)) channel-number) output)
     (setf (fill-pointer output) 0)
+
     (vector-push (mus-sample-to-short sound) output)))
 
 (defun outa (sound)
@@ -60,6 +62,9 @@
 
 (defun outb (sound)
   (out-any sound 1))
+
+(defun %send-buffer (buffer channel-number)
+  (send-message (aref (player-channels (controller-player *controller*)) channel-number) (copy-seq buffer)))
 
 (defun play-file (filename)
   (with-sound
@@ -151,18 +156,21 @@
 			     +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes player)))
 
   (loop
+     :with buffers = '()
      :with channel-count = 0
      :do (loop named outer
 	    :do (setf channel-count 0)
-	    :do (loop for channel across (player-channels player)
-		   :do (multiple-value-bind (outbuffer ok)
-			   (receive-message-no-hang channel)
-			 (when ok
-			   (incf channel-count)
-			   (print outbuffer)
-			   (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))))
-		   :finally (unless (> channel-count 0)
-			      (return-from outer))))
+	    :do (setf buffers '())
+	    :do (setf buffers (loop for channel across (player-channels player)
+				 :do (multiple-value-bind (outbuffer ok)
+					 (receive-message-no-hang channel)
+				       (when ok
+					 (incf channel-count)
+					 (collect outbuffer)
+				 :finally (unless (> channel-count 0)
+					    (return-from outer))))))
+	    :do (cond ((= (length buffers) 1)
+		       (mus-audio-write (player-dac player) (car buffers) (player-out-bytes player)))))
      :while (> channel-count 0)))
 
 ;;   (loop
