@@ -38,7 +38,7 @@
   `(make-thread (lambda ()
 		  (send-message (controller-message-box *controller*) :start)
 		  
-		  (let ((%output (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16) :fill-pointer 0 :initial-element 0))
+		  (let ((%output (%make-buffer))
 			(%channel 0))
 		    (declare (special %output) (special %channel))
 		    ,@body
@@ -65,6 +65,9 @@
 
 (defun %send-buffer (buffer channel-number)
   (send-message (aref (player-channels (controller-player *controller*)) channel-number) (copy-seq buffer)))
+
+(defun %make-buffer ()
+  (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16) :fill-pointer 0 :initial-element 0))
 
 (defun play-file (filename)
   (with-sound
@@ -156,39 +159,27 @@
 			     +mus-audio-default+ *srate* *channels* +mus-audio-compatible-format+ (player-out-bytes player)))
 
   (loop
-     :with buffers = '()
+     :with buffers = (make-array (length (player-channels player)) :fill-pointer 0)
      :with channel-count = 0
      :do (loop named outer
 	    :do (setf channel-count 0)
-	    :do (setf buffers '())
-	    :do (setf buffers (loop for channel across (player-channels player)
-				 :do (multiple-value-bind (outbuffer ok)
-					 (receive-message-no-hang channel)
-				       (when ok
-					 (incf channel-count)
-					 (collect outbuffer)
-				 :finally (unless (> channel-count 0)
-					    (return-from outer))))))
+	    :do (setf (fill-pointer buffers) 0)
+	    :do (loop for channel across (player-channels player)
+		   :do (multiple-value-bind (outbuffer ok)
+			   (receive-message-no-hang channel)
+			 (when ok
+			   (incf channel-count)
+			   (vector-push outbuffer buffers)
+			   :finally (unless (> channel-count 0)
+				      (return-from outer)))))
 	    :do (cond ((= (length buffers) 1)
-		       (mus-audio-write (player-dac player) (car buffers) (player-out-bytes player)))))
+		       (mus-audio-write (player-dac player) (aref buffers 0) (player-out-bytes player)))
+		      ((> (length buffers) 0)
+		       (let ((sound (%make-buffer)))
+			 (loop for i from 0 below (* *buffer-size* *channels*)
+			    :do (loop for k below (length buffers)
+				   :summing (aref (aref buffers k) i) :into final
+				   :finally (when (> final 0)
+					      (setf (aref sound i) (/ final (length buffers))))))
+			 (mus-audio-write (player-dac player) sound (player-out-bytes player))))))
      :while (> channel-count 0)))
-
-;;   (loop
-;;      ;;todo this buffer should be cleaned
-;;      :with outbuffer = (make-array (* *buffer-size* *channels*) :element-type '(signed-byte 16))
-;;      :with channel-count = 0
-;;      :do (loop named outer for i below (length outbuffer)
-;; 	    :do (setf channel-count 0)
-;; 	    :do (let ((snd (loop for channel across (player-channels player)
-;; 			      :with sample = 0
-;; 			      :do (multiple-value-bind (sound ok)
-;; 				      (receive-message-no-hang channel)
-;; 				    (when ok
-;; 				      (incf channel-count)
-;; 				      (incf sample sound)))
-;; 			      :finally (if (> channel-count 0)
-;; 					   (return (/ sample channel-count))
-;; 					   (return-from outer)))))
-;; 		  (setf (aref outbuffer i) (mus-sample-to-short snd))))
-;;      :do (mus-audio-write (player-dac player) outbuffer (player-out-bytes player))
-;;      :while (> channel-count 0)))
