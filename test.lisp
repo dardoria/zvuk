@@ -29,8 +29,27 @@
 		(mus-oscil o2 0.0d0 0.0d0)))))
 
 (defun test-sample-file (file-name channel start samples)
-  (let ((sample-array 
+  (let ((sample-array
 	 (load-sample-file file-name channel start samples)))
     (with-sound
 	(loop for sample across sample-array
+	   do (outa sample)))
+
+
+    (with-sound
+	(loop for sample across sample-array
 	   do (outa sample)))))
+
+(defun test-sample-files ()
+    (let ((sample-array1 
+	   (load-sample-file #p"~/proekti/silanque/mellotron/Cello/A4.wav" 0 0 222000))
+	  (sample-array2
+	   (load-sample-file #p"~/proekti/silanque/mellotron/Cello/D4.wav" 0 0 222000)
+	    ))
+    (with-sound
+	(loop for sample across sample-array1
+	   do (outa sample)))
+
+    (with-sound
+	(loop for sample across sample-array2
+	   do (outb sample)))))
